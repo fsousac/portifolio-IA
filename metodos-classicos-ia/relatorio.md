@@ -8,14 +8,14 @@
 
 | #   | Família                | Problema                                                                       | Script                      |
 | --- | ---------------------- | ------------------------------------------------------------------------------ | --------------------------- |
-| 1   | Busca informada        | Alinhamento global de DNA como busca A* (com UCS, Greedy e Weighted A*)        | `01_busca_informada.py`     |
-| 2   | Busca não informada    | Rush Hour: BFS, DFS, DLS, IDDFS, UCS e bidirecional                            | `02_busca_nao_informada.py` |
-| 3   | Busca complexa (local) | Layout de teclado para o português: hill climbing, recozimento simulado e beam | `03_busca_complexa.py`      |
-| 4   | Algoritmo genético     | Aproximação de imagem com triângulos translúcidos                              | `04_algoritmo_genetico.py`  |
-| 5   | CSP                    | Geração de cruzadinhas: backtracking, MRV, LCV, FC, AC-3/MAC e Min-Conflicts   | `05_csp.py`                 |
-| 6   | Base de conhecimento   | Campo Minado por inferência lógica: KB em CNF, DPLL e encadeamento de regras   | `06_base_conhecimento.py`   |
+| 1   | Busca informada        | Alinhamento global de DNA como busca A* (com UCS, Greedy e Weighted A*)        | [`01_busca_informada.py`](https://github.com/fsousac/portifolio-IA/blob/main/metodos-classicos-ia/01_busca_informada.py)     |
+| 2   | Busca não informada    | Rush Hour: BFS, DFS, DLS, IDDFS, UCS e bidirecional                            | [`02_busca_nao_informada.py`](https://github.com/fsousac/portifolio-IA/blob/main/metodos-classicos-ia/02_busca_nao_informada.py) |
+| 3   | Busca complexa (local) | Layout de teclado para o português: hill climbing, recozimento simulado e beam | [`03_busca_complexa.py`](https://github.com/fsousac/portifolio-IA/blob/main/metodos-classicos-ia/03_busca_complexa.py)      |
+| 4   | Algoritmo genético     | Aproximação de imagem com triângulos translúcidos                              | [`04_algoritmo_genetico.py`](https://github.com/fsousac/portifolio-IA/blob/main/metodos-classicos-ia/04_algoritmo_genetico.py)  |
+| 5   | CSP                    | Geração de cruzadinhas: backtracking, MRV, LCV, FC, AC-3/MAC e Min-Conflicts   | [`05_csp.py`](https://github.com/fsousac/portifolio-IA/blob/main/metodos-classicos-ia/05_csp.py)                 |
+| 6   | Base de conhecimento   | Campo Minado por inferência lógica: KB em CNF, DPLL e encadeamento de regras   | [`06_base_conhecimento.py`](https://github.com/fsousac/portifolio-IA/blob/main/metodos-classicos-ia/06_base_conhecimento.py)   |
 
-**Como reproduzir.** Requer Python 3 (testado com 3.14) e `pip install -r requirements.txt` (numpy, matplotlib, pillow). Cada script é independente, usa seeds fixas, lê os arquivos auxiliares ao lado dele (`corpus_pt.txt`, `palavras_pt.txt`), imprime as tabelas no console, grava as figuras em `figs/` e a saída textual completa em `figs/NN_saida.txt`. Os contadores de nós, avaliações e backtracks são determinísticos; só os tempos de relógio variam com a carga da máquina (por isso o texto privilegia contagens). Os detalhes de execução estão no `README.md`.
+**Como reproduzir.** Requer Python 3 (testado com 3.14) e `pip install -r requirements.txt` (numpy, matplotlib, pillow). Cada script é independente, usa seeds fixas, lê os arquivos auxiliares ao lado dele (`corpus_pt.txt`, `palavras_pt.txt`), imprime as tabelas no console, grava as figuras em `figs/` e a saída textual completa em `figs/NN_saida.txt`. Os contadores de nós, avaliações e backtracks são determinísticos; só os tempos de relógio variam com a carga da máquina (por isso o texto privilegia contagens). O passo a passo para rodar (incluindo o ambiente virtual) está no [README principal do projeto](https://github.com/fsousac/portifolio-IA/blob/main/README.md) e no [README do módulo](https://github.com/fsousac/portifolio-IA/blob/main/metodos-classicos-ia/README.md).
 
 **Critério de escolha dos problemas.** Evitou-se o repertório escolar de cada família (8-puzzle, N-rainhas, caixeiro-viajante, sudoku, mapa da Romênia). Cada problema foi escolhido para ter (i) ótimo conhecido ou verificável de forma independente (Needleman-Wunsch, BFS multi-fonte, verificador de cruzamentos), (ii) tamanho ajustável para mostrar como o custo cresce e (iii) resultado visual ou interpretável (heatmaps, tabuleiros, layouts, imagens, grades). Onde há um algoritmo exato, ele serve de verdade de referência nos `assert`.
 
@@ -32,6 +32,8 @@
 ---
 
 ## Projeto 1 - Busca informada: alinhamento de DNA como busca A\*
+
+**Código:** [`01_busca_informada.py`](https://github.com/fsousac/portifolio-IA/blob/main/metodos-classicos-ia/01_busca_informada.py) · **Como rodar:** [README principal](https://github.com/fsousac/portifolio-IA/blob/main/README.md)
 
 ### 1. Problema
 
@@ -129,6 +131,8 @@ O gap do Greedy e enorme em 5% porque o custo otimo e pequeno (denominador baixo
 
 ## Projeto 2 - Busca não informada: Rush Hour
 
+**Código:** [`02_busca_nao_informada.py`](https://github.com/fsousac/portifolio-IA/blob/main/metodos-classicos-ia/02_busca_nao_informada.py) · **Como rodar:** [README principal](https://github.com/fsousac/portifolio-IA/blob/main/README.md)
+
 ### 1. Problema
 
 O Rush Hour é um quebra-cabeça de blocos deslizantes em um tabuleiro 6x6. Cada carro ocupa 2 ou 3 células, é horizontal ou vertical e só desliza ao longo do próprio eixo. O carro vermelho `X` (horizontal, linha 3) deve chegar à borda direita, ocupando as colunas 5-6. Sem estimativa de distância até o objetivo, é um caso típico de planejamento em que movimentos precisam desbloquear uns aos outros.
@@ -214,6 +218,8 @@ O IDDFS-puro só terminou em R01 (6.488 nós contra 558 da BFS, 11,6x) e esgotou
 **Escalabilidade.** A BFS cabe em memória aqui (no máximo 11.739 estados). Em tabuleiros maiores o espaço cresce combinatorialmente e seria preciso um método informado ou de memória limitada.
 
 ## Projeto 3 - Busca Complexa: layout de teclado para o português por busca local
+
+**Código:** [`03_busca_complexa.py`](https://github.com/fsousac/portifolio-IA/blob/main/metodos-classicos-ia/03_busca_complexa.py) · **Como rodar:** [README principal](https://github.com/fsousac/portifolio-IA/blob/main/README.md)
 
 ### 1. Problema
 
@@ -323,6 +329,8 @@ O algoritmo redescobriu um padrão ergonômico conhecido: vogais na linha-base i
 
 ## Projeto 4 - Algoritmo Genético: aproximação de imagem com triângulos translúcidos
 
+**Código:** [`04_algoritmo_genetico.py`](https://github.com/fsousac/portifolio-IA/blob/main/metodos-classicos-ia/04_algoritmo_genetico.py) · **Como rodar:** [README principal](https://github.com/fsousac/portifolio-IA/blob/main/README.md)
+
 ### 1. Problema
 
 Dada uma imagem-alvo T de 64x64 pixels (uma paisagem sintética gerada por código: céu em gradiente, sol com halo, duas cadeias de montanhas e um lago com reflexo), encontrar uma lista de N triângulos translúcidos cuja composição se pareça o máximo possível com T. O problema é interessante para busca evolutiva porque a função de custo depende de uma rasterização discreta e não é diferenciável em relação aos vértices, além de ter muitos ótimos locais (a ordem de desenho muda o resultado).
@@ -414,6 +422,8 @@ Principais observações:
 - O custo é dominado pela renderização; MSE em pixels não equivale à qualidade perceptual.
 
 ## Projeto 5 - CSP: geração de cruzadinha
+
+**Código:** [`05_csp.py`](https://github.com/fsousac/portifolio-IA/blob/main/metodos-classicos-ia/05_csp.py) · **Como rodar:** [README principal](https://github.com/fsousac/portifolio-IA/blob/main/README.md)
 
 ### 1. Problema
 
@@ -515,6 +525,8 @@ Pontos objetivos da execução:
 ---
 
 ## Projeto 6 - Base de conhecimento: Campo Minado por inferência lógica
+
+**Código:** [`06_base_conhecimento.py`](https://github.com/fsousac/portifolio-IA/blob/main/metodos-classicos-ia/06_base_conhecimento.py) · **Como rodar:** [README principal](https://github.com/fsousac/portifolio-IA/blob/main/README.md)
 
 ### 1. Problema
 
