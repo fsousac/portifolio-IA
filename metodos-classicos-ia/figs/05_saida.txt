@@ -1,0 +1,139 @@
+Projeto 5 - CSP: geracao de cruzadinha
+Dicionario: 1666 palavras unicas; por comprimento: 2:27 3:151 4:332 5:488 6:329 7:189 8:115 9:35
+
+=== Teste de generalidade do nucleo CSP: 8 rainhas ===
+config        nos  backtracks  tempo(s)  linhas por coluna       
+------------  ---  ----------  --------  ------------------------
+BT            113  105         0.0000    [0, 4, 7, 5, 2, 6, 1, 3]
+BT+MRV        75   67          0.0156    [0, 4, 7, 5, 2, 6, 1, 3]
+BT+MRV+FC     75   67          0.0000    [0, 4, 7, 5, 2, 6, 1, 3]
+MAC+MRV+Grau  20   12          0.0000    [0, 4, 7, 5, 2, 6, 1, 3]
+
+=== Experimento principal: configuracoes x grades ===
+Dicionario: 1666 palavras; orcamento por execucao: 30000000 unidades de trabalho (valores de dominio inspecionados) ou 400000 nos; Min-Conflicts: 6000 passos.
+TIMEOUT = orcamento esgotado (nos/backtracks sao entao LIMITES INFERIORES).
+
+grade    bloqueadas  slots  cruzam.  grau medio  slots por comprimento 
+-------  ----------  -----  -------  ----------  ----------------------
+5x5-A    16.0%       10     21       4.20        3:2 4:4 5:4           
+5x5-B    16.0%       10     19       3.80        2:2 3:1 4:2 5:5       
+7x7-A    18.4%       20     34       3.40        2:6 3:4 4:4 5:2 6:4   
+7x7-B    18.4%       20     38       3.80        2:4 3:4 4:6 5:2 6:4   
+9x9-A    21.0%       32     52       3.25        2:10 3:6 4:8 5:2 6:6  
+9x9-B    21.0%       32     56       3.50        2:10 3:4 4:6 5:8 6:4  
+11x11-A  18.2%       46     85       3.70        2:8 3:11 4:6 5:15 6:6 
+11x11-B  22.3%       48     86       3.58        2:12 3:8 4:12 5:12 6:4
+
+grade    configuracao        status   nos          backtracks        trabalho  CPU(s)  AC-3 podou
+-------  ------------------  -------  -----------  ----------------  --------  ------  ----------
+5x5-A    BT                  TIMEOUT  21104        21097             30001425  1.656             
+5x5-A    BT+MRV              OK       1590         1580              12760797  0.984             
+5x5-A    BT+MRV+Grau         OK       1790         1780              14207133  2.125             
+5x5-A    BT+MRV+FC           OK       1590         1580              367365    0.047             
+5x5-A    BT+MRV+Grau+LCV+FC  OK       1988         1978              406348    0.062             
+5x5-A    AC3+BT+MRV+FC       OK       3000         2990              528119    0.062   26.6%     
+5x5-A    MAC+MRV+Grau        OK       86           76                280488    0.016   26.6%     
+5x5-A    MAC+MRV+Grau+LCV    OK       48           38                149667    0.000   26.6%     
+5x5-B    BT                  TIMEOUT  20570        20565             30000861  3.594             
+5x5-B    BT+MRV              OK       767          757               5575854   0.672             
+5x5-B    BT+MRV+Grau         OK       771          761               5602113   0.609             
+5x5-B    BT+MRV+FC           OK       767          757               219830    0.016             
+5x5-B    BT+MRV+Grau+LCV+FC  OK       9539         9529              2149639   0.297             
+5x5-B    AC3+BT+MRV+FC       OK       512          502               151325    0.016   44.8%     
+5x5-B    MAC+MRV+Grau        OK       25           15                107967    0.016   44.8%     
+5x5-B    MAC+MRV+Grau+LCV    OK       102          92                198732    0.031   44.8%     
+7x7-A    BT                  TIMEOUT  91328        91319             30000147  4.094             
+7x7-A    BT+MRV              TIMEOUT  4120         4108              30000738  4.828             
+7x7-A    BT+MRV+Grau         TIMEOUT  4067         4056              30000060  4.891             
+7x7-A    BT+MRV+FC           OK       6401         6381              1008106   0.125             
+7x7-A    BT+MRV+Grau+LCV+FC  OK       30878        30858             9006750   1.312             
+7x7-A    AC3+BT+MRV+FC       OK       2979         2959              569224    0.078   48.2%     
+7x7-A    MAC+MRV+Grau        OK       28           8                 120857    0.016   48.2%     
+7x7-A    MAC+MRV+Grau+LCV    OK       27           7                 96998     0.016   48.2%     
+7x7-B    BT                  TIMEOUT  66386        66378             30000651  3.984             
+7x7-B    BT+MRV              TIMEOUT  2647         2642              30000558  5.328             
+7x7-B    BT+MRV+Grau         TIMEOUT  2593         2589              30000834  5.703             
+7x7-B    BT+MRV+FC           OK       14744        14724             4274840   0.438             
+7x7-B    BT+MRV+Grau+LCV+FC  OK       6731         6711              2512374   0.344             
+7x7-B    AC3+BT+MRV+FC       OK       1092         1072              282711    0.031   34.1%     
+7x7-B    MAC+MRV+Grau        OK       25           5                 167660    0.031   34.1%     
+7x7-B    MAC+MRV+Grau+LCV    OK       94           74                656015    0.094   34.1%     
+9x9-A    BT                  TIMEOUT  21114        21106             30001032  3.906             
+9x9-A    BT+MRV              TIMEOUT  3660         3638              30000084  6.172             
+9x9-A    BT+MRV+Grau         OK       911          879               14556399  3.078             
+9x9-A    BT+MRV+FC           TIMEOUT  115848       115824            30000067  2.891             
+9x9-A    BT+MRV+Grau+LCV+FC  TIMEOUT  60019        60005             30000275  3.922             
+9x9-A    AC3+BT+MRV+FC       OK       2009         1977              360286    0.047   38.6%     
+9x9-A    MAC+MRV+Grau        OK       166          134               388767    0.094   38.6%     
+9x9-A    MAC+MRV+Grau+LCV    OK       243          211               690453    0.141   38.6%     
+9x9-B    BT                  TIMEOUT  30769        30761             30000372  3.562             
+9x9-B    BT+MRV              TIMEOUT  1709         1698              30000924  6.891             
+9x9-B    BT+MRV+Grau         TIMEOUT  1703         1690              30000102  7.203             
+9x9-B    BT+MRV+FC           OK       23872        23840             9914393   1.047             
+9x9-B    BT+MRV+Grau+LCV+FC  TIMEOUT  58039        58014             30000001  3.484             
+9x9-B    AC3+BT+MRV+FC       OK       10020        9988              3668615   0.359   48.3%     
+9x9-B    MAC+MRV+Grau        OK       51           19                385201    0.062   48.3%     
+9x9-B    MAC+MRV+Grau+LCV    OK       678          646               5929627   0.891   48.3%     
+11x11-A  BT                  TIMEOUT  29911        29900             30000249  3.781             
+11x11-A  BT+MRV              TIMEOUT  818          813               30000090  8.000             
+11x11-A  BT+MRV+Grau         TIMEOUT  815          811               30001134  9.500             
+11x11-A  BT+MRV+FC           TIMEOUT  62628        62603             30000226  2.766             
+11x11-A  BT+MRV+Grau+LCV+FC  TIMEOUT  49940        49925             30000190  4.031             
+11x11-A  AC3+BT+MRV+FC       OK       36445        36399             19080422  1.625   37.5%     
+11x11-A  MAC+MRV+Grau        OK       327          281               5980158   0.922   37.5%     
+11x11-A  MAC+MRV+Grau+LCV    TIMEOUT  14087        14049             30000059  6.016   37.5%     
+11x11-B  BT                  TIMEOUT  45761        45751             30000426  3.531             
+11x11-B  BT+MRV              TIMEOUT  911          899               30000006  8.109             
+11x11-B  BT+MRV+Grau         TIMEOUT  911          900               30000243  8.484             
+11x11-B  BT+MRV+FC           TIMEOUT  32854        32838             30000246  2.094             
+11x11-B  BT+MRV+Grau+LCV+FC  TIMEOUT  29962        29953             30000168  2.672             
+11x11-B  AC3+BT+MRV+FC       OK       65546        65498             11948820  1.516   45.0%     
+11x11-B  MAC+MRV+Grau        OK       169          121               775466    0.125   45.0%     
+11x11-B  MAC+MRV+Grau+LCV    OK       541          493               2153968   0.328   45.0%     
+5x5-A    Min-Conflicts       TIMEOUT  6000 passos  melhor=3 confl.   -         4.750             
+5x5-B    Min-Conflicts       TIMEOUT  6000 passos  melhor=2 confl.   -         4.094             
+7x7-A    Min-Conflicts       OK       4985 passos  melhor=0 confl.   -         3.000             
+7x7-B    Min-Conflicts       TIMEOUT  6000 passos  melhor=4 confl.   -         3.672             
+9x9-A    Min-Conflicts       TIMEOUT  6000 passos  melhor=6 confl.   -         3.922             
+9x9-B    Min-Conflicts       TIMEOUT  6000 passos  melhor=6 confl.   -         5.109             
+11x11-A  Min-Conflicts       TIMEOUT  6000 passos  melhor=15 confl.  -         7.250             
+11x11-B  Min-Conflicts       TIMEOUT  6000 passos  melhor=12 confl.  -         6.281             
+
+=== Resumo por tamanho (2 grades por tamanho) ===
+configuracao        5x5                           7x7                            9x9                            11x11                        
+------------------  ----------------------------  -----------------------------  -----------------------------  -----------------------------
+BT                  0/2 ok; 41674 nos; 5.25s CPU  0/2 ok; 157714 nos; 8.08s CPU  0/2 ok; 51883 nos; 7.47s CPU   0/2 ok; 75672 nos; 7.31s CPU 
+BT+MRV              2/2 ok; 2357 nos; 1.66s CPU   0/2 ok; 6767 nos; 10.16s CPU   0/2 ok; 5369 nos; 13.06s CPU   0/2 ok; 1729 nos; 16.11s CPU 
+BT+MRV+Grau         2/2 ok; 2561 nos; 2.73s CPU   0/2 ok; 6660 nos; 10.59s CPU   1/2 ok; 2614 nos; 10.28s CPU   0/2 ok; 1726 nos; 17.98s CPU 
+BT+MRV+FC           2/2 ok; 2357 nos; 0.06s CPU   2/2 ok; 21145 nos; 0.56s CPU   1/2 ok; 139720 nos; 3.94s CPU  0/2 ok; 95482 nos; 4.86s CPU 
+BT+MRV+Grau+LCV+FC  2/2 ok; 11527 nos; 0.36s CPU  2/2 ok; 37609 nos; 1.66s CPU   0/2 ok; 118058 nos; 7.41s CPU  0/2 ok; 79902 nos; 6.70s CPU 
+AC3+BT+MRV+FC       2/2 ok; 3512 nos; 0.08s CPU   2/2 ok; 4071 nos; 0.11s CPU    2/2 ok; 12029 nos; 0.41s CPU   2/2 ok; 101991 nos; 3.14s CPU
+MAC+MRV+Grau        2/2 ok; 111 nos; 0.03s CPU    2/2 ok; 53 nos; 0.05s CPU      2/2 ok; 217 nos; 0.16s CPU     2/2 ok; 496 nos; 1.05s CPU   
+MAC+MRV+Grau+LCV    2/2 ok; 150 nos; 0.03s CPU    2/2 ok; 121 nos; 0.11s CPU     2/2 ok; 921 nos; 1.03s CPU     1/2 ok; 14628 nos; 6.34s CPU 
+Min-Conflicts       0/2 ok; 12000 nos; 8.84s CPU  1/2 ok; 10985 nos; 6.67s CPU   0/2 ok; 12000 nos; 9.03s CPU   0/2 ok; 12000 nos; 13.53s CPU
+
+Maior grade resolvida: 11x11-B (primeiro solucionador: AC3+BT+MRV+FC)
+Palavras: V0_0=banco, H0_2=saida, V0_2=se, V0_3=as, V0_4=isca, V0_5=dor, H0_8=ovo, V0_8=ou, V0_9=vagar, V0_10=os, H1_0=avesso, V1_1=voar, H1_7=duas, V1_7=drogas, H2_0=no, H2_4=crer, V2_6=elas, H3_0=cal, V3_2=latir, H3_6=local, V3_8=colar, V3_10=la, H4_0=orar, V4_3=rodada, H4_6=agora, H5_2=tom, V5_4=mora, H5_6=sal, H6_0=umido, V6_0=um, V6_1=motor, H6_7=sala, V6_9=lida, V6_10=amora, H7_0=morar, V7_6=jota, H7_8=rim, H8_3=dado, V8_5=dar, H8_9=do, H9_0=moda, V9_0=me, V9_2=da, H9_5=atacar, V9_7=ai, V9_8=ca, H10_0=era, H10_4=praia
+
+=== Experimento: tamanho do dicionario (9x9-A, MAC+MRV+Grau) ===
+10 subconjuntos aleatorios (e ordens de valores) por fracao; limite 5000000 unidades de trabalho.
+dicionario  palavras  SAT  UNSAT  TIMEOUT  nos medianos (SAT)  tempo medio(s)
+----------  --------  ---  -----  -------  ------------------  --------------
+50%         833       0    10     0        -                   0.013         
+60%         1000      0    10     0        -                   0.045         
+70%         1166      0    10     0        -                   0.164         
+80%         1333      2    8      0        2424                0.302         
+90%         1499      7    0      3        1201                0.525         
+100%        1666      6    0      4        229                 0.530         
+
+=== Experimento: densidade de casas bloqueadas (9x9, MAC+MRV+Grau) ===
+12 grades aleatorias simetricas por densidade; limite 5000000 unidades de trabalho; slots <= 6 letras.
+bloqueadas  slots (media)  slots de 2 letras  SAT  UNSAT  TIMEOUT  nos medianos (SAT)
+----------  -------------  -----------------  ---  -----  -------  ------------------
+14.8%       33.3           7.3                2    4      6        700               
+19.8%       31.8           7.5                7    2      3        52                
+24.7%       32.8           10.7               9    1      2        45                
+29.6%       29.3           9.8                12   0      0        32                
+
+Tempo total: 220.6s de CPU; 231.7s de relogio
+Todas as autoverificacoes passaram.

@@ -1,0 +1,131 @@
+# Dicionario embutido de palavras comuns do portugues, SEM acentos (a-z), comprimentos 2 a 9.
+# Palavras separadas por espaco/linha. Linhas iniciadas por # sao comentarios.
+# O script 05_csp.py normaliza, remove duplicatas e descarta o que estiver fora de [a-z]{2,9}.
+
+# --- 2 letras ---
+ao as os um de da do em na no eu tu ai ir ou se te me la ca pe ve vi fe ha so ri
+
+# --- 3 letras ---
+sol lua mar rio ceu paz voz luz cor dia mes ano sim nao mal bem pao rei pai mae avo tio tia uva ovo asa
+boa bom mau bar cha cao gol pia pes mao dor ler ver ser ter vir por sem sob tua sua meu seu dar faz fez
+vez vai vou vem via era foi fui iam ela eco ira ora uma uns uso ato ave cal cem mil dez dos das nos nas
+nem que mel fel sal sul lar lei fio fim tom som rua boi pau ali ola dom eis gel ida rir rim tal tao tem
+teu vil vao voa voo vos ama ame ria riu sai sei sou dei deu dou fiz pus pos usa oca ode oco elo ala aia
+bau bis cio cru duo jaz leu lia par rol rum sao ate aro mas mim nau
+tez ido ova
+
+# --- 4 letras ---
+agua alma amor anel anos arco area arma aros asas atum aula aves azar azul baba bala bola bolo bota
+boca bico bela bebe beco boas bons cabo cada cama cana capa cara casa cava cera chao cima cita coco
+cola come coro cota copo cova crer cria cuba cura dado dama dano data dedo deus dica dias doce doer
+dono dose dura duas eixo ecos elas eles erro esta este esse fada faca fado fala falo fama fase fato
+fava feio feno fera fila fino fita foca fogo fome fone fora fosa foto frio fuga fuma gado gafe gama
+gata gato gema giro goma gola gota gozo grau grao guia haja hino hora ilha isca isso item jato jogo
+joia jota juiz juro lado lago laco lama lata lava leao lema leme leva lida lima lira lixo loja lobo
+logo lona luar luta luva maca mago maio mala mama mana mapa mare mata meia meio mela mesa meta mico
+mito moda modo mola mole mora moto mudo mula mura muro nada nave neto neve nome nova novo nuca nulo
+obra oito olho onda onde oral orar osso ouro ouvi pais pano para pato pele pena pera peso pipa pois
+polo pomo povo puma pura puro quem raio rato raro rede rega reis reta reto rica rico rifa rima rios
+risa rota roxo rude ruas ruim rumo sabe saco saia sala sapo seca seda sede selo sexo sino sobe soco
+sofa soja sola solo sono sopa sova suco suja sujo tabu tapa taxa tela tema teto tiro tolo tomo topo
+trem tres trio tudo tufo unha unir urso uvas vaca vaga vale vara vaso vela veio veia vida vila vime
+vira visa vivo voar voce vota voto vovo zelo zero zona alvo asno avos bafo belo bife boda brio cais
+cair caos cede cela cena cofre coxa cubo dito diva doar dobra duto fixo flor fluir foco fole furo
+galo gelo giz gume iate imas nota pulo rosa rolo roda rico seio
+tomo tosa trapo vago vira zelo bola cabe cais come diga dobro fico gosta
+
+# --- 5 letras ---
+acaso adeus agora ainda alado algum aluno amiga amigo amora anjos antes apoio areia arroz astro atriz
+baixo banco banda barco barra batom beijo bicho bispo blusa bolsa brava brisa bruxa burro cabra caixa
+calor campo canal canto carne carro carta casal causa cerca certo chave chefe cheio chuva cinco circo
+clima cobra coisa comum conta corpo corte couro cravo credo cruel curso curva danca dente digno disco
+doida dolar dorso duelo duplo elite ervas falar falta farol farsa fatia feliz ferro festa fiapo fibra
+ficar filho final firme fogao folha forca forma forno forte fosco fruta fugir fundo gaita ganho garra
+garfo gasto gemer genio gente gesto girar globo golpe gorro graca grade grama grato graxa grupo horas
+hotel humor ideal igual ilhas imune jaula jeito jogar jovem julho junho junto justa justo lacre largo
+latir leite lenda lento letra levar lider limao linda linha livro local longe louca louco lugar lutar
+macio magro maior mania manha manso mapas marca marco massa matar mesmo metal meses mexer milho minha
+misto moeda molho monte morar morte mosca motor mover mundo museu nariz nasce navio negro nervo nivel
+ninho noite norte notas novas novos nuvem obeso obras ontem opcao ordem outra outro ouvir palco pardo
+parar parte passo pasta patio pausa peixe pedra pegar pente perto pesca piano pilar pilha pinta pista
+placa plano plena pobre podre poema pombo ponto porco porta posse pouco praca prado praia prata prazo
+preco prova puxar quase queda quero radio raiva rampa rapaz razao reino rezar rocha rosto roupa rural
+sabao sabor sagaz saida salto santo saude secar selva senha serie servo setor sexta signo sinal sinos
+sobre sogro solar sonho sorte sujar tarde tecer temer tempo tenda terra tigre tinta tiros tocar todos
+tomar tombo tosse touro traco trago traje trava trigo troca trono tropa tumba turno ultra unico urubu
+usina usual vagar valer valor vapor vazio veloz vento verao verde verso vezes vidro viola virar vinho
+viver vosso vozes zebra zelar lapis irmao mamao gosto prego prima ideia pedir sabia sacar salvo samba
+sexto sigla sinto sitio sobra sonda sopro suave sumir surdo tapar tacos tenro terco tesao tocha tosco
+total trama trevo turma tutor umido vagas valsa vasto vazia verba viajo vigia vinte viril visor vital
+vogal voraz abrir adiar agudo aguia aldeia alvos ancora anexo anzol arpao artes astuto atual
+avaro aviso bacia bagaco baile balde banho barba barro basta bater bebes beber bemol bicos bolas
+bonus brado brejo briga brilho? brocha bruto bruma cacau cacho cacto caldo calmo cambio canoa capim
+caqui carga casca casco cauda cedro cheia choro cidra cifra cinta cisne claro clube cocar colar
+comer copos coral corja corda cores coroa crase crime cunha curto dados dique doido doces dueto
+
+# --- 6 letras ---
+abelha abrigo aceite acordo adulto agenda agente alegre almoco altura amanha amante ameaca animal
+anotar antigo apenas aperto arvore atacar atento aviao azeite balcao baleia banana barata batata
+beleza bilhete bonito branco brigar cabelo cabide camelo campos canela cantor capaz carona cartao
+catorze cavalo cebola centro cereja cesto chance chapeu chegar cheiro chuvas cidade cinema cobrir
+coelho colher colega comida comeco compra contos copiar correr cortar costas coroas couve crente
+criada cruzar cuidar curtir dancar dedos deixar dentro depois desde desejo diario dieta direto
+doente dobrar doces dormir dragao drogas efeito eleito ensino entrar escola escuro esfera espaco
+espada estado estilo exame existe faixas ferias festas filmes fingir flores fluxo focar formas
+frango frente frutas fumaca fundos futuro ganhar garota gaveta gelado genial girafa gloria gordo
+gostar grande grito gruta guerra homens humano idioma ilusao imagem inicio irmaos janela jantar
+jardim jarros jejum jornal julgar lagoas lancha latido legume lembra leoes levado libras limpar
+lindas longa lotado lousa luvas macaco magica maleta mangas manter marcar marido massas matriz
+medico melhor membro mentir menino mesada metros minuto modelo moinho montar mostra motivo mulher
+muitos museus musica nadar nascer natal navios nervos normal nossos novela numero objeto oceano
+olhar ombros onibus ordens orelha origem ossos ousado pacote padrao pagar palmas parede parque
+passar pastel patrao pedido pegada pensar perdao perder pessoa pintor piscar planta plural poeira
+polvo pontos portal postar poucas praias prazer prensa pressa prisao queijo quente quilos quinta
+raizes rapido raposa rasgar razoes reagir recado recuar redes regra reinar relato render repete
+resto reunir ricos rigido rodada rolar romper roubar sabado sacola saidas salada salvar sapato
+saudar semana sentir sereia sermao servir sessao sinais sitios solido somar sonhar sorrir subida
+subir surdos susto tabela tambor tarefa teatro tecido tempos tender tenis terno testar tigela
+tijolo tirano tirar titulo tomate tornar torres trazer trilha trocar tumulo ultimo unidos usinas
+vacina vagoes valete vazios velhos vender verbos viagem vidros vigiar vinhos visita viuvas vivida
+voador volume votar vulcao xadrez zangar zumbis abraco acerto adorar aliado amigos anilha apagar
+aquele armada asfalto avesso baixar barril batida bispos bolhas bravos brisas burros cachos caixas
+
+# --- 7 letras ---
+abracos alegria amizade animais aparece armario arquivo assunto atencao balanca bateria beijos
+bolinho cabelos caderno caminho campeao canhoto capital carinho carrega casaco castelo catalogo
+cavalos cenario cenoura cerveja chamada cidadao cliente colecao coluna combate comedia contudo
+copiado coracao corrida cozinha criador crianca cuidado cultura curioso desafio desejar destino
+detalhe diamante direita discurso durante emprego encanto energia escolar esforco espelho esporte
+estrada estudar exemplo famoso festival formiga futebol galeria garagem garrafa gaviao gigante
+gostoso governo inverno jogador jornais lanterna laranja lembrar leitura liquido lixeira lugares
+madeira martelo massagem medalha memoria mentira mercado mistura mochila moderno morango morcego
+mudanca negocio noticia oficina palavra palmeira passaro passeio perfume pintura piscina planeta
+plantas popular prefeito produto projeto receita recibo recreio relogio remedio repouso revista
+rodovia romance segredo segundo semente sentido serpente silencio simples sistema soldado sorriso
+sorvete sossego suporte surpresa sucesso sujeira talento tapetes telefone telhado tempero tesouro
+tesoura teclado tentar terraco tijolos torcida tornado trabalho tratado tribunal turismo turista
+universo vaidade valente vassoura veiculo verdade vestido viagens vidraca vinagre violino virtude
+visitar vitoria vizinho voltar vontade abaixar acender acordar adiante afastar aguardo alcance
+alguem amarelo ampliar andares animado antenas apagado aplauso apoiar aposta arrumar artigos
+assinar atrasos ativos avancar bagunca banheiro barulho bebidas bengala botoes brincar cabines
+cachorro calcado camisas campanha cansado carreta cartazes cascata cesteiro chegada cinturao
+
+# --- 8 letras ---
+academia acidente alegrias aliviado alimento aluguel amarelas ambiente aprender armadura arquivos
+artistas aventura bandeira barbeiro batalhao biscoito bochecha bombeiro borracha brinquedo
+cabeleira cachorro calcados camiseta campanha carrinho carteira casamento cavaleiro chaveiro
+cobertor colheita comercio confusao conversa corredor cotidiano criancas cuidados dinheiro
+diretor doutores educacao elefante elevador encontro entrada escolhas escritor esquerda estacao
+exercito familiar fantasma farmacia feijoada ferrugem floresta fogueira formatura fronteira
+garrafas gasolina gravador guitarra historia hospital industria infancia inimigos leopardo
+livraria macarrao material mecanico montanha mudancas natureza novidade obstaculo ocasiao
+passagem perguntas presente primeiro problema qualquer relogios reuniao sabonete sandalia
+segredos sobrenome tartaruga trabalho universo vizinhos voluntario abandono abertura absoluto
+acabamos advogado agradece alcance alfabeto alimenta amanhece andorinha apertado aplicado
+
+# --- 9 letras ---
+aeroporto aparelho barbearia borboleta chocolate computador conversas cozinheiro diversao
+elefantes emprestimo empregado engenheiro geladeira mensagens motorista papagaio passageiro
+pensamento perfumaria professor sobremesa vegetais universal tartarugas aeronaves alfabetos
+almofadas anunciante aposentado arquitetos assistente atividades automovel bailarina bandeiras
+bibliotecas cachoeira caminhada campeonato cantoria capacete carpintaria celebrado chapeuzinho

@@ -1,0 +1,67 @@
+========================================================================
+PROJETO 3 - BUSCA COMPLEXA: LAYOUT DE TECLADO PARA PORTUGUES
+========================================================================
+Corpus: 149984 caracteres, 118597 toques em teclas validas, 389 bigramas distintos de 900 possiveis.
+Teclas mais frequentes: a=13.9%, e=11.8%, o=9.7%, s=7.2%, i=7.0%, r=6.6%, u=5.1%, n=5.1%
+Espaco de busca: 30! = 2.653e+32; vizinhanca = 435 trocas.
+Orcamento = 30000 avaliacoes/execucao; 12 sementes.
+
+--- Baselines ---
+QWERTY (ABNT2)      : custo = 1.9918
+Aleatorio (2000 layouts): media = 2.2635, desvio = 0.2535, min = 1.3299, max = 3.0159
+QWERTY e 12.0% melhor que o aleatorio medio.
+
+Calibracao SA: piora media de uma troca aleatoria = 0.0623; T0 = 0.0899 (aceita 50% da piora media), Tf = T0/1000 = 0.000090
+
+--- Resultados (custo por bigrama; menor e melhor) ---
+Custo medio dos layouts iniciais (aleatorios, mesmas sementes): 2.2420
+algoritmo          media  desvio     min     max  evals(med)  vs QWERTY  gap/melhor  bate QWERTY
+------------------------------------------------------------------------------------------------
+HC steepest       0.9100  0.0148  0.8905  0.9353       11818      54.3%       3.74%        12/12
+HC first          0.9141  0.0186  0.8790  0.9452        2503      54.1%       4.20%        12/12
+HC reinicios      0.8842  0.0041  0.8772  0.8891       30000      55.6%       0.80%        12/12
+SA geometrico     0.8857  0.0079  0.8775  0.9050       30000      55.5%       0.97%        12/12
+SA linear         0.9009  0.0084  0.8843  0.9168       30000      54.8%       2.70%        12/12
+SA logaritmico    0.9062  0.0178  0.8777  0.9444       30000      54.5%       3.30%        12/12
+Beam (k=8)        0.8963  0.0166  0.8803  0.9372       15028      55.0%       2.18%        12/12
+Melhor layout global: custo = 0.8772 (algoritmo: HC reinicios); reducao vs QWERTY = 56.0%
+
+Avaliacoes ate o custo ficar abaixo do QWERTY (media sobre sementes que conseguiram):
+  HC steepest     :      239  (12/12)
+  HC first        :       14  (12/12)
+  HC reinicios    :       17  (12/12)
+  SA geometrico   :       20  (12/12)
+  SA linear       :       31  (12/12)
+  SA logaritmico  :       11  (12/12)
+  Beam (k=8)      :        7  (12/12)
+
+QWERTY na grade 3x10:
+    q w e r t y u i o p
+    a s d f g h j k l ç
+    z x c v b n m , . ;
+Melhor layout encontrado:
+    k . h n f , p x ç y
+    u i s r l c t a e o
+    ; b v m z g d q j w
+
+metrica                                   QWERTY    melhor
+bigramas no mesmo dedo (%)                  8.10      1.01
+bigramas alternando maos (%)               51.49     60.70
+toques na linha base (%)                   32.87     72.02
+esforco individual medio por toque         0.804     0.387
+
+--- Otimos locais: 300 partidas aleatorias de HC first-improvement ---
+Custo dos otimos locais: media = 0.9055, desvio = 0.0199, min = 0.8790, max = 0.9940
+Layouts distintos: 299/300; custos distintos (6 casas): 290; avaliacoes medias ate o otimo local: 2678
+Fracao dos otimos locais dentro de 1% do melhor global: 13.7%; que atingem o melhor global: 0.0%; piores que o QWERTY: 0.0%
+
+--- Sensibilidade do SA geometrico a T0 (Tf = T0/1000; 10 sementes) ---
+        T0    media   desvio      min
+   0.00009   0.8978   0.0072   0.8841   (T0 = 0.001 x calibrado)
+   0.00090   0.9085   0.0323   0.8824   (T0 = 0.01 x calibrado)
+   0.00899   0.8839   0.0043   0.8786   (T0 = 0.1 x calibrado)
+   0.08992   0.8815   0.0056   0.8772   (T0 = 1 x calibrado)
+   0.89920   0.8854   0.0050   0.8799   (T0 = 10 x calibrado)
+   8.99203   0.9497   0.0134   0.9171   (T0 = 100 x calibrado)
+
+Asserts OK. Tempo total: 124.5 s

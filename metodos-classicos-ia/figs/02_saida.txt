@@ -1,0 +1,135 @@
+Projeto 2 - Busca nao informada (Rush Hour 6x6)
+Timeout por execucao: 10.0s (excecoes: {'IDDFS': 120.0, 'IDDFS-puro': 120.0}; orcamento de nos: {'IDDFS-puro': 150000, 'IDDFS': 2000000}) | DLS: L=14 | custo: 1 por movimento
+
+Instancias:
+  R01: 11 carros, otimo conhecido = 5 movimentos
+  R02: 11 carros, otimo conhecido = 8 movimentos
+  R03: 11 carros, otimo conhecido = 11 movimentos
+  R04: 12 carros, otimo conhecido = 14 movimentos
+  R05: 12 carros, otimo conhecido = 17 movimentos
+  R06: 12 carros, otimo conhecido = 20 movimentos
+  R07: 12 carros, otimo conhecido = 23 movimentos
+  R08: 13 carros, otimo conhecido = 26 movimentos
+  R09: 14 carros, otimo conhecido = 28 movimentos
+  R10: 14 carros, otimo conhecido = 30 movimentos
+  [R01] concluida (0s desde o inicio)
+  [R02] concluida (3s desde o inicio)
+  [R03] concluida (7s desde o inicio)
+  [R04] concluida (13s desde o inicio)
+  [R05] concluida (19s desde o inicio)
+  [R06] concluida (25s desde o inicio)
+  [R07] concluida (35s desde o inicio)
+  [R08] concluida (39s desde o inicio)
+  [R09] concluida (46s desde o inicio)
+  [R10] concluida (52s desde o inicio)
+
+Comprimento da solucao (movimentos)  [TIMEOUT/CORTE = sem solucao]
+inst   otimo         BFS         DFS   DLS(L=14)       IDDFS  IDDFS-puro         UCS      Bidir.
+------------------------------------------------------------------------------------------------
+R01        5           5          90          14           5           5           5           5
+R02        8           8        2267          14           8     TIMEOUT           8           8
+R03       11          11         732          14          11     TIMEOUT          11          11
+R04       14          14        3104          14          14     TIMEOUT          14          14
+R05       17          17        2950       CORTE          17     TIMEOUT          17          17
+R06       20          20        8667       CORTE          20     TIMEOUT          20          20
+R07       23          23        4688       CORTE          23     TIMEOUT          23          23
+R08       26          26         296       CORTE          26     TIMEOUT          26          26
+R09       28          28        1344       CORTE          28     TIMEOUT          28          28
+R10       30          30        1386       CORTE          30     TIMEOUT          30          30
+
+Nos expandidos (visitados)  [* = parcial ate TIMEOUT/CORTE]
+inst   otimo         BFS         DFS   DLS(L=14)       IDDFS  IDDFS-puro         UCS      Bidir.
+------------------------------------------------------------------------------------------------
+R01        5         558          91         521        1055        6488        1291          72
+R02        8        6192        2268        6836       26582     150001*        8636         675
+R03       11        2985         735        6105       23228     150001*        4783        1109
+R04       14        5694        3240       23231       86647     150001*        7270        2464
+R05       17        6227        3319      14151*      119524     150001*        7764        2677
+R06       20        7258        8948       4086*      116485     150001*        8933        2304
+R07       23       10555        4865       5334*      306919     150001*       11739        6017
+R08       26         533         322        856*       31351     150001*         684         407
+R09       28        2798        1385       2008*      198996     150001*        2824        2600
+R10       30        2798        1430       1466*      173851     150001*        2824        2284
+
+Tamanho maximo da fronteira  [* = parcial]
+inst   otimo         BFS         DFS   DLS(L=14)       IDDFS  IDDFS-puro         UCS      Bidir.
+------------------------------------------------------------------------------------------------
+R01        5         742         675          15           6           6        1233         217
+R02        8        2553       15443          15           9          7*        2553        1195
+R03       11        1800        4213          15          12          8*        2732        1177
+R04       14        1577       11725          15          15          8*        1887        1495
+R05       17        1538       11294         15*          18          8*        1759        1028
+R06       20        1732       45696         15*          21          8*        1840        1741
+R07       23        1386       25231         15*          24          9*        1386        2400
+R08       26         149         929         15*          27         11*         241         232
+R09       28         324        4512         15*          29         10*         324         572
+R10       30         368        4592         15*          31         11*         368         545
+
+Estados armazenados (max)  [* = parcial]
+inst   otimo         BFS         DFS   DLS(L=14)       IDDFS  IDDFS-puro         UCS      Bidir.
+------------------------------------------------------------------------------------------------
+R01        5        1291          91        1098        1291           6        2494         289
+R02        8        8636        2268        6546        8636          7*       10776        1870
+R03       11        4783         735        4225        4783          8*        7514        2286
+R04       14        7270        3240        7270        7270          8*        9145        3959
+R05       17        7764        3319       4160*        7719          8*        9522        3705
+R06       20        8933        8948       1917*        8933          8*       10691        4045
+R07       23       11739        4865       2758*       11739          9*       12983        8314
+R08       26         684         322        211*         684         11*         924         639
+R09       28        2824        1385        647*        2824         10*        2866        3172
+R10       30        2824        1430        315*        2824         11*        2866        2777
+
+Tempo (s)
+inst   otimo         BFS         DFS   DLS(L=14)       IDDFS  IDDFS-puro         UCS      Bidir.
+------------------------------------------------------------------------------------------------
+R01        5        0.01        0.00        0.00        0.01        0.06        0.01        0.00
+R02        8        0.06        0.02        0.07        0.26        1.81        0.19        0.01
+R03       11        0.06        0.05        0.12        0.47        3.08        0.12        0.03
+R04       14        0.14        0.07        0.46        1.73        3.23        0.22        0.07
+R05       17        0.12        0.08        0.33        2.28        3.05        0.13        0.05
+R06       20        0.14        0.22        0.09        2.61        3.19        0.24        0.05
+R07       23        0.23        0.12        0.09        6.41        2.67        0.27        0.12
+R08       26        0.01        0.00        0.01        0.54        2.77        0.01        0.01
+R09       28        0.05        0.03        0.04        4.21        2.56        0.06        0.07
+R10       30        0.05        0.03        0.02        3.16        2.65        0.04        0.05
+
+Variante de custo: UCS com custo = celulas percorridas vs. solucao da BFS
+inst    BFS movs  BFS cel  UCS-cel movs  UCS-cel cel     exp
+R01            5        6             5            6     669
+R02            8       12             8           12    9175
+R03           11       16            11           16    3564
+R04           14       26            14           24    7798
+R05           17       30            17           29    8379
+R06           20       32            20           32    9649
+R07           23       40            27           38   14046
+R08           26       36            28           36    1186
+R09           28       44            29           44    2843
+R10           30       48            31           48    2843
+
+Bidirecional com meta ARBITRARIA (5 estados resolvidos sorteados, seed 0) vs. meta mais proxima
+inst   resolvidos  otimo  movs medio  movs max  nos medio nos meta prox.  nos BFS
+R01          2654      5        15.2        18      10964             72      558
+R02          2654      8        16.6        17      15259            675     6192
+R03          2654     11        15.4        19       4096           1109     2985
+R04          5678     14        20.0        24       6457           2464     5694
+R05          5678     17        22.0        26       5720           2677     6227
+R06          1826     20        27.2        28      11380           2304     7258
+R07          1826     23        28.8        30      13142           6017    10555
+R08          4966     26        45.8        50       7208            407      533
+R09          1572     28        34.0        38       3758           2600     2798
+R10          1572     30        40.6        42       3811           2284     2798
+
+Asserts OK: BFS = UCS = Bidir. = otimo em todas as instancias; IDDFS = otimo nas 10 em que terminou; DFS/DLS >= otimo.
+Comprimento DFS / otimo por instancia: 18.0, 283.4, 66.5, 221.7, 173.5, 433.4, 203.8, 11.4, 48.0, 46.2
+
+Resumo: razao (nos expandidos)/(nos expandidos da BFS), quando terminou
+  BFS          concluidas=10  TIMEOUT=0  CORTE=0  razao media=1.00
+  DFS          concluidas=10  TIMEOUT=0  CORTE=0  razao media=0.52
+  DLS(L=14)    concluidas= 4  TIMEOUT=0  CORTE=6  razao media=2.04
+  IDDFS        concluidas=10  TIMEOUT=0  CORTE=0  razao media=28.56
+  IDDFS-puro   concluidas= 1  TIMEOUT=9  CORTE=0  razao media=11.63
+  UCS          concluidas=10  TIMEOUT=0  CORTE=0  razao media=1.35
+  Bidir.       concluidas=10  TIMEOUT=0  CORTE=0  razao media=0.49
+
+Figuras: 02_solucao.png (instancia R04), 02_expandidos.png, 02_fronteira.png
+Tempo total: 69.6s

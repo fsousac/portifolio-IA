@@ -1,0 +1,50 @@
+======================================================================
+PROJETO 4 - Algoritmo Genetico: aproximacao de imagem com triangulos
+======================================================================
+alvo: sintetico (paisagem), 64x64; orcamento = 40000 avaliacoes/execucao; sementes = 3; nucleos = 12
+MSE de referencia: imagem = cor media do alvo: 0.03259 (PSNR 14.9 dB); imagem preta: 0.24597
+custo de 1 avaliacao (N=50, render+MSE): 0.131 ms -> 40000 avals = 5.2 s por execucao (1 nucleo)
+
+Rodando 36 execucoes do GA em paralelo (12 configuracoes x 3 sementes)...
+assert OK: com elitismo (E>=1) o melhor MSE e monotonicamente nao crescente em todas as execucoes
+sem elitismo: numero de geracoes em que o melhor piorou (por semente) = [425, 415, 420]
+
+--- Execucao principal (base, semente 0) ---
+geracao | avaliacoes | MSE      | PSNR (dB)
+      0 |         40 | 0.14382  | 8.42
+    100 |       3840 | 0.02823  | 15.49
+   1000 |      38040 | 0.00553  | 22.57
+   1051 |      39978 | 0.00532  | 22.74
+
+--- Ablacao: MSE final apos o orcamento (media +- dp sobre 3 sementes) ---
+configuracao                           | MSE medio |       dp |   PSNR |   melhor | geracoes | t/exec (s)
+base (pm=.05,P=40,unif,N=50,E=2)       |   0.00552 |  0.00049 |  22.58 |  0.00505 |     1051 |       37.9
+pm=0.01                                |   0.00547 |  0.00042 |  22.62 |  0.00509 |     1051 |       34.4
+pm=0.15                                |   0.00957 |  0.00006 |  20.19 |  0.00952 |     1051 |       45.1
+pm=0.4                                 |   0.01735 |  0.00458 |  17.61 |  0.01379 |     1051 |       64.5
+P=10                                   |   0.00322 |  0.00009 |  24.92 |  0.00309 |     4998 |       54.3
+P=160                                  |   0.00838 |  0.00103 |  20.77 |  0.00740 |      252 |       49.9
+sem crossover                          |   0.00618 |  0.00016 |  22.09 |  0.00596 |     1051 |       40.8
+ponto unico                            |   0.00568 |  0.00063 |  22.46 |  0.00489 |     1051 |       32.3
+N=10                                   |   0.01035 |  0.00030 |  19.85 |  0.00993 |     1051 |       17.8
+N=25                                   |   0.00593 |  0.00072 |  22.27 |  0.00499 |     1051 |       23.8
+N=100                                  |   0.00563 |  0.00005 |  22.49 |  0.00557 |     1051 |       49.7
+sem elitismo (E=0)                     |   0.00658 |  0.00092 |  21.82 |  0.00540 |      999 |       35.3
+
+--- MSE apos fracoes do orcamento (media sobre sementes) ---
+configuracao                           |     4000 |    10000 |    20000 |    40000
+base (pm=.05,P=40,unif,N=50,E=2)       |  0.02716 |  0.01360 |  0.00904 |  0.00552
+pm=0.01                                |  0.04286 |  0.01863 |  0.00979 |  0.00547
+pm=0.15                                |  0.02358 |  0.01553 |  0.01254 |  0.00957
+pm=0.4                                 |  0.03202 |  0.02374 |  0.02117 |  0.01735
+P=10                                   |  0.01442 |  0.00785 |  0.00501 |  0.00322
+P=160                                  |  0.04509 |  0.02481 |  0.01349 |  0.00838
+sem crossover                          |  0.05560 |  0.02180 |  0.01121 |  0.00618
+ponto unico                            |  0.03539 |  0.01702 |  0.00943 |  0.00568
+N=10                                   |  0.04293 |  0.01681 |  0.01188 |  0.01035
+N=25                                   |  0.03524 |  0.01326 |  0.00869 |  0.00593
+N=100                                  |  0.02079 |  0.01155 |  0.00807 |  0.00563
+sem elitismo (E=0)                     |  0.03022 |  0.01520 |  0.01041 |  0.00658
+
+Figuras salvas em C:\Users\felipe.coelho\Documents\programms\personal\portifolio-IA\metodos-classicos-ia\figs (04_evolucao.png, 04_ablacao.png, 04_galeria.png, 04_evolucao.gif)
+Tempo total: 169.2 s
