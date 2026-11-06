@@ -1,0 +1,64 @@
+=== VERIFICACAO ===
+KF filtrado e RTS == solucao MAP em lote (T=16, 30% de perda): maior diferenca 1.49e-12
+ganho estacionario do KF vs. filtro alfa-beta (Kalata):
+  q=0.01  s=10.0  alfa KF=0.131851 formula=0.131851 | beta KF=0.009317 formula=0.009317
+  q=0.3   s=5.0   alfa KF=0.373125 formula=0.373125 | beta KF=0.086732 formula=0.086732
+  q=4.0   s=20.0  alfa KF=0.360000 formula=0.360000 | beta KF=0.080000 formula=0.080000
+
+=== VOO EXEMPLO (semente 42): 97 de 300 leituras ausentes, tunel = passos 120-159 ===
+incerteza de posicao do KF (desvio por eixo, m): antes do tunel 12.0, fim do tunel 136.2, 5 passos depois 10.5; ruido da medida 20
+erro real do KF no fim do tunel: 198.5 m
+
+=== RMSE DE POSICAO (m) em 50 voos, 20% de perda aleatoria + tunel; mesmas medidas para todos ===
+metodo                      RMSE total       RMSE no tunel    melhor que KF (voos)
+crua (hold)             113.65 +- 5.85      300.83 +- 16.20               0/50
+media movel 5           113.22 +- 5.77      300.91 +- 16.15               0/50
+Kalman (filtro)          35.55 +- 7.66       80.47 +- 24.45               0/50
+Kalman + RTS             10.53 +- 2.16       20.14 +-  7.41              50/50
+particulas N=2000        41.99 +- 9.04       81.64 +- 25.57               4/50
+ganho do KF sobre a medida crua: 68.7% do RMSE; RTS sobre KF: 70.4%
+
+=== RMSE (m) x taxa de perda aleatoria de leituras (alem do tunel), 30 voos por taxa ===
+  perda       crua (hold)     media movel 5   Kalman (filtro)      Kalman + RTS
+    0.0            111.54            111.00             35.66             10.44
+    0.2            112.56            112.10             37.01             11.13
+    0.4            118.73            118.33             42.26             12.87
+    0.6            122.65            122.35             49.03             13.62
+    0.8            144.13            144.09             82.81             20.86
+    0.9            207.42            207.42            185.41             51.02
+
+=== FILTRO DE PARTICULAS: distancia RMS a media do KF (m), 10 voos ===
+       N   dist. a media do KF
+      20       433.563 +-65.109
+     100       240.060 +-88.169
+     500        65.031 +-30.269
+    2500        17.861 +-5.344
+   12500         9.231 +-4.807
+
+=== ABLACAO: ruido de processo q, KF vs. particulas (N=500), 10 voos, RMSE total (m) ===
+     q        KF   particulas
+   0.1      53.9        622.3
+   0.5      34.7         58.2
+
+=== CONSISTENCIA em dados do proprio modelo: 300 execucoes de 100 passos, 20% de perda ===
+NEES medio esperado = 4 (limites 95% da media sobre 300 execucoes: [3.69, 4.33]); NIS esperado = 2
+filtro                              NEES medio  % passos nos limites  NIS medio
+bem ajustado (q, s verdadeiros)           3.96                    96       1.99
+q 100x menor (otimista)                 148.80                     4       6.44
+q 100x maior (pessimista)                 2.21                     1       1.34
+s 3x maior (R pessimista)                 2.18                     0       0.35
+
+=== SENSIBILIDADE: RMSE (m) do KF no drone, q_nominal=0.5 e s_nominal=20; linhas = fator em q, colunas = fator em s^2 ===
+  q x \ s^2 x     0.01      0.1        1       10      100
+         0.01    37.14    75.99   179.99   255.32   313.73
+          0.1    40.69    37.12    75.96   179.97   255.42
+            1    67.65    40.67    37.04    75.94   180.05
+           10   136.54    67.63    40.61    37.05    76.30
+          100   270.56   136.53    67.60    40.61    37.59
+melhor da grade: q x 1, s^2 x 1 -> 37.04 m; nominal (1,1): 37.04 m; pior: 313.73 m
+
+=== ABLACAO: forma de Joseph x (I-KH)P em float32, medida quase exata (s=0.05, q=1e-6, 300 passos) ===
+  Joseph    assimetria relativa maxima 4.65e-08   menor autovalor de P 4.94e-06
+  (I-KH)P   assimetria relativa maxima 2.92e-03   menor autovalor de P -2.65e-09
+
+Todos os assert passaram. (tempo total ~ 20 s)

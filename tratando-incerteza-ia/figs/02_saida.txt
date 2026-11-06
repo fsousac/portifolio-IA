@@ -1,0 +1,56 @@
+=== VERIFICACAO ===
+HMM pequeno (3 estados, T=7): forward == soma de 3^7 caminhos (9.603541e-06); Viterbi == melhor caminho (p=3.118551e-07); Viterbi 2a ordem == forca bruta.
+
+corpus: 139399 simbolos (treino 111519, teste 27880); estados=27
+entropia do bigrama ~ 3.16 bits/letra (uniforme seria 4.75)
+
+=== TAXA DE ERRO POR CARACTERE (CER, %), media +- desvio em 5 trechos de 3000 caracteres ===
+     p                   cru          sem contexto       Viterbi bigrama     posterior bigrama      Viterbi trigrama
+  0.05          5.05 +-0.20          4.79 +-0.21          3.10 +-0.18          3.08 +-0.20          2.02 +-0.17
+  0.10         10.17 +-0.39          9.59 +-0.28          6.22 +-0.35          6.12 +-0.35          3.93 +-0.10
+  0.20         19.81 +-1.01         18.13 +-0.81         11.63 +-0.38         11.45 +-0.41          7.25 +-0.59
+  0.30         29.20 +-1.13         25.55 +-0.56         17.03 +-1.22         16.85 +-1.00         11.05 +-0.66
+  0.40         40.38 +-1.22         34.16 +-0.71         22.93 +-1.81         22.41 +-1.73         15.54 +-0.91
+
+=== PALAVRAS CORRETAS (%), mesmas execucoes ===
+     p                   cru          sem contexto       Viterbi bigrama     posterior bigrama      Viterbi trigrama
+  0.05                  80.9                  82.1                  87.5                  87.5                  91.9
+  0.10                  65.6                  67.6                  77.8                  77.6                  86.0
+  0.20                  44.1                  45.7                  63.1                  62.8                  77.5
+  0.30                  30.7                  32.5                  52.2                  51.7                  69.5
+  0.40                  20.2                  23.5                  44.7                  43.4                  62.9
+
+trigrama - bigrama (CER, pontos percentuais, pareado): p=0.05: +1.08, p=0.1: +2.29, p=0.2: +4.37, p=0.3: +5.98, p=0.4: +7.39
+
+confusoes mais frequentes do Viterbi bigrama (p=0.2, verdade->decodificado; '_'=espaco): a->s:18, r->e:14, _->n:13, n->_:12, o->i:12, e->a:11
+amostra (p=0.2):
+  verdade : do meu tempo eram devotas cabral accrescentou que o reitor de s jose a quem contara ultima
+  digitado: dobmeu tempocsram decotws cabral accrescenyoumwue k rsitor de s jlseva qjem cojtara ultima
+  Viterbi : do meu tempocaram decotas cabral a crescentou que o esitor de s joseva quem contara ultima
+  trigrama: do meu tempoceram decitas cabral accrescentou que o reitor de e jose a quem contara ultima
+
+=== BAUM-WELCH: digitador de taxa de erro DESCONHECIDA (p real = 0.3) ===
+(a) EM livre de B (729 parametros), A do corpus fixa, so texto digitado, sem rotulos:
+ T (chars)  log P final  log P (B real)  KL(B real||B)
+      2000      -5499.3         -5596.3         3.8118
+      6000     -16750.5        -16879.7         1.9002
+     12000     -33702.2        -33877.9         1.1959
+  (B inicial: KL = 0.5414). log P final > log P com B real, e KL cresce: o EM livre SUPERAJUSTA.
+(b) EM com emissao parametrizada pelo teclado (1 parametro, p), A fixa:
+ T (chars)  p estimado   |erro|
+       500      0.2865   0.0135
+      2000      0.2929   0.0071
+      6000      0.2963   0.0037
+     12000      0.2994   0.0006
+(c) EM de A, B, pi (6000 chars): log P -17922.8 -> -16219.4 (monotono); |A - A_corpus|_1 por linha: 0.823 (A inicial: 0.656)
+
+CER do Viterbi bigrama com cada modelo de emissao (p real 0.3; 5 trechos de 3000):
+  oracle (p=0.30 conhecido)       17.73 +- 1.42
+  p suposto 0.05 (errado)         19.16 +- 0.78
+  p suposto 0.60 (errado)         22.14 +- 1.64
+  EM de p (teclado, 1 param.)     17.73 +- 1.42
+  EM livre de B (729 param.)      22.10 +- 1.10
+  EM de A, B, pi                  35.98 +- 1.07
+  (texto cru)                     29.20
+
+Todos os assert passaram. (tempo total ~ 18 s)

@@ -7,6 +7,7 @@ Portfólio de projetos de Inteligência Artificial, organizado por módulo. Cada
 | Módulo                  | Pasta                                            | Conteúdo                                                                                                                                                                                         | Como rodar                                         |
 | ----------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
 | Métodos Clássicos de IA | [`metodos-classicos-ia/`](metodos-classicos-ia/) | 6 projetos em Python (busca informada, busca não informada, busca complexa, algoritmo genético, CSP e base de conhecimento) e o relatório em [`relatorio.md`](metodos-classicos-ia/relatorio.md) | [README do módulo](metodos-classicos-ia/README.md) |
+| Tratando incerteza | [`tratando-incerteza-ia/`](tratando-incerteza-ia/) | 3 projetos em Python (redes bayesianas, modelos de Markov ocultos e filtro de Kalman) e o relatório em [`relatorio.md`](tratando-incerteza-ia/relatorio.md) | [README do módulo](tratando-incerteza-ia/README.md) |
 
 ## Como rodar um módulo
 
