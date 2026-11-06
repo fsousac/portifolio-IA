@@ -61,4 +61,4 @@ melhor da grade: q x 1, s^2 x 1 -> 37.04 m; nominal (1,1): 37.04 m; pior: 313.73
   Joseph    assimetria relativa maxima 4.65e-08   menor autovalor de P 4.94e-06
   (I-KH)P   assimetria relativa maxima 2.92e-03   menor autovalor de P -2.65e-09
 
-Todos os assert passaram. (tempo total ~ 20 s)
+Todos os assert passaram. (tempo total ~ 27 s)

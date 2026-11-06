@@ -54,6 +54,9 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
+# fontes legiveis quando a figura e reduzida a largura de uma pagina A4
+plt.rcParams.update({"font.size": 10, "axes.titlesize": 10.5, "axes.labelsize": 10, "legend.fontsize": 9, "xtick.labelsize": 9, "ytick.labelsize": 9})
 import numpy as np
 
 PASTA = Path(__file__).resolve().parent
@@ -77,6 +80,7 @@ class Fator:
     """Tabela sobre variaveis binarias: eixo k de `t` corresponde a vars[k]."""
 
     def __init__(self, vars_, t):
+        """Guarda a lista de variaveis do fator e a tabela t (um eixo por variavel, na mesma ordem)."""
         self.vars = list(vars_)
         self.t = np.asarray(t, dtype=float)
 
@@ -90,6 +94,7 @@ def multiplicar(a, b):
 
 
 def somar_fora(f, v):
+    """Marginaliza (soma) a variavel v do fator f. Entrada: Fator f, nome v. Saida: novo Fator sem v."""
     ax = f.vars.index(v)
     return Fator([u for u in f.vars if u != v], f.t.sum(axis=ax))
 
@@ -118,13 +123,16 @@ def noisy_or(ps, leak):
 
 
 class Rede:
+    """Rede bayesiana discreta binaria: nos em ordem topologica, pais, CPTs (arrays) e filhos."""
     def __init__(self):
+        """Cria rede vazia (ordem topologica, pais, CPTs e filhos)."""
         self.order = []        # ordem topologica
         self.pais = {}
         self.cpt = {}
         self.filhos = {}
 
     def add(self, nome, pais, cpt):
+        """Acrescenta o no `nome` com pais e CPT. Os pais devem ja existir (ordem topologica)."""
         self.order.append(nome)
         self.pais[nome] = list(pais)
         self.cpt[nome] = np.asarray(cpt, dtype=float)
@@ -133,6 +141,7 @@ class Rede:
             self.filhos[p].append(nome)
 
     def fator(self, v):
+        """Devolve a CPT do no v como Fator sobre (pais + [v])."""
         return Fator(self.pais[v] + [v], self.cpt[v])
 
     def p(self, v, estado):
@@ -140,10 +149,12 @@ class Rede:
         return self.cpt[v][tuple(estado[p] for p in self.pais[v]) + (estado[v],)]
 
     def n_parametros(self):
+        """Numero de parametros livres se cada no usasse tabela cheia (2^pais por no)."""
         return sum(2 ** len(self.pais[v]) for v in self.order)
 
 
 def ancestrais(rede, alvo):
+    """Conjunto de `alvo` e de todos os seus ancestrais; usado na poda de nos barren."""
     vis, pilha = set(), list(alvo)
     while pilha:
         v = pilha.pop()
@@ -155,6 +166,7 @@ def ancestrais(rede, alvo):
 
 
 def rede_clinica():
+    """Constroi a rede clinica de 15 nos (3 fatores de risco, 5 doencas, 7 sintomas/exame) com CPTs noisy-OR de parametros inventados."""
     r = Rede()
     r.add("Fumante", [], np.array([0.75, 0.25]))
     r.add("Poluicao", [], np.array([0.70, 0.30]))
@@ -197,6 +209,7 @@ def rede_aleatoria(n, seed):
 # Verdade de referencia: conjunta por forca bruta
 # ----------------------------------------------------------------------------
 def conjunta(rede):
+    """Conjunta completa (2^15 entradas) por produto de todos os fatores; verdade de referencia por forca bruta."""
     f = None
     for v in rede.order:
         f = rede.fator(v) if f is None else multiplicar(f, rede.fator(v))
@@ -204,6 +217,7 @@ def conjunta(rede):
 
 
 def posteriori_bruta(rede, J, consulta, evid):
+    """P(consulta | evid) a partir da conjunta J: restringe a evidencia, marginaliza o resto e normaliza."""
     f = J
     for v, val in evid.items():
         f = restringir(f, v, val)
@@ -216,10 +230,12 @@ def posteriori_bruta(rede, J, consulta, evid):
 # Inferencia exata 1: enumeracao
 # ----------------------------------------------------------------------------
 def enumeracao(rede, consulta, evid, stats=None):
+    """Inferencia por enumeracao (ENUMERATION-ASK). Entrada: rede, consulta, evidencia, stats (conta chamadas). Saida: vetor P(consulta | evid)."""
     stats = stats if stats is not None else {}
     stats["chamadas"] = 0
 
     def enum_all(vars_, e):
+        """Soma recursiva sobre as variaveis ocultas na ordem topologica; devolve P(vars_, e) marginalizado."""
         if not vars_:
             return 1.0
         stats["chamadas"] += 1
@@ -241,6 +257,7 @@ def enumeracao(rede, consulta, evid, stats=None):
 # Inferencia exata 2: eliminacao de variaveis
 # ----------------------------------------------------------------------------
 def _escolhe(fatores, ocultas, heuristica, rng):
+    """Escolhe a proxima variavel oculta a eliminar pela heuristica (min-fill, min-size ou aleatoria)."""
     if heuristica == "aleatoria":
         return ocultas[int(rng.integers(len(ocultas)))]
     adj = {}
@@ -265,6 +282,8 @@ def eliminacao(rede, consulta, evid, heuristica="min-fill", poda=True, stats=Non
     entradas) e mults (soma dos tamanhos das tabelas-produto)."""
     stats = stats if stats is not None else {}
     stats["tam_max"], stats["mults"] = 0, 0
+    # Poda de nos barren: um no que nao e consulta, evidencia nem ancestral deles soma 1 quando
+    # marginalizado, entao pode ser descartado sem mudar o resultado (e reduz os fatores).
     manter = ancestrais(rede, [consulta, *evid]) if poda else set(rede.order)
     fatores = []
     for v in rede.order:
@@ -272,11 +291,11 @@ def eliminacao(rede, consulta, evid, heuristica="min-fill", poda=True, stats=Non
             continue
         f = rede.fator(v)
         for e, val in evid.items():
-            f = restringir(f, e, val)
+            f = restringir(f, e, val)   # evidencia entra cortando o eixo do fator
         fatores.append(f)
     ocultas = [v for v in rede.order if v in manter and v != consulta and v not in evid]
     while ocultas:
-        v = _escolhe(fatores, ocultas, heuristica, rng)
+        v = _escolhe(fatores, ocultas, heuristica, rng)   # ordem de eliminacao define o maior fator criado
         ocultas.remove(v)
         com = [f for f in fatores if v in f.vars]
         fatores = [f for f in fatores if v not in f.vars]
@@ -287,7 +306,8 @@ def eliminacao(rede, consulta, evid, heuristica="min-fill", poda=True, stats=Non
             prod = multiplicar(prod, f)
             stats["mults"] += prod.t.size
         stats["tam_max"] = max(stats["tam_max"], prod.t.size)
-        fatores.append(somar_fora(prod, v))
+        fatores.append(somar_fora(prod, v))   # novo fator sem v; as demais ocultas seguem
+
     res = fatores[0]
     for f in fatores[1:]:
         res = multiplicar(res, f)
@@ -299,6 +319,7 @@ def eliminacao(rede, consulta, evid, heuristica="min-fill", poda=True, stats=Non
 # Inferencia aproximada
 # ----------------------------------------------------------------------------
 def amostra_direta(rede, N, rng):
+    """Amostragem ancestral de N configuracoes completas da rede (vetorizada); devolve dict nome -> array de 0/1."""
     X = {}
     for v in rede.order:
         pa = rede.pais[v]
@@ -343,6 +364,7 @@ def gibbs(rede, consulta, evid, n_varreduras, rng, queima=200):
     ocultas = [v for v in rede.order if v not in evid]
 
     def cond(v):
+        """Distribuicao de v dado seu manto de Markov (pais, filhos e pais dos filhos), normalizada; passo do Gibbs."""
         pr = np.empty(2)
         for val in (0, 1):
             estado[v] = val
@@ -378,6 +400,7 @@ def aprende(rede_ref, dados, alfa):
 
 
 def kl(P, Q):
+    """Divergencia KL(P||Q) em nats entre dois Fatores; infinita se Q zera onde P nao zera."""
     p, q = P.t.ravel(), Q.t.ravel()
     m = p > 0
     if np.any(q[m] == 0):
@@ -397,7 +420,8 @@ POS = {
 
 
 def desenha_rede(rede, post, evid, titulo, arq):
-    fig, ax = plt.subplots(figsize=(13, 5.4))
+    """Desenha a rede com a probabilidade a posteriori de cada no (cor) e a evidencia marcada; grava em figs/arq."""
+    fig, ax = plt.subplots(figsize=(13, 5.0))
     for v in rede.order:
         for p in rede.pais[v]:
             (x0, y0), (x1, y1) = POS[p], POS[v]
@@ -410,7 +434,7 @@ def desenha_rede(rede, post, evid, titulo, arq):
         ev = v in evid
         ax.scatter([x], [y], s=2300, c=[cmap(p1)], edgecolors="black" if ev else "#555",
                    linewidths=3.0 if ev else 0.8, zorder=3)
-        ax.text(x, y + 0.02, f"{v}\n{p1:.2f}" + ("*" if ev else ""), ha="center", va="center", fontsize=7.5, zorder=4)
+        ax.text(x, y + 0.02, f"{v}\n{p1:.2f}" + ("*" if ev else ""), ha="center", va="center", fontsize=9, zorder=4)
     ax.set_xlim(-1, 10.6)
     ax.set_ylim(-0.6, 2.5)
     ax.axis("off")
@@ -418,12 +442,13 @@ def desenha_rede(rede, post, evid, titulo, arq):
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(0, 1))
     fig.colorbar(sm, ax=ax, fraction=0.025, pad=0.01, label="P(variavel = 1 | evidencia)")
     fig.tight_layout()
-    fig.savefig(FIGS / arq, dpi=170)
+    fig.savefig(FIGS / arq, dpi=220)
     plt.close(fig)
 
 
 # ----------------------------------------------------------------------------
 def main():
+    """Executa todos os experimentos do projeto 1, imprime as tabelas, faz os assert e grava figuras e saida."""
     rede = rede_clinica()
     n_nos = len(rede.order)
 
@@ -613,18 +638,18 @@ def main():
     ax = axs[1]
     nomes = [n.replace(" + ", "\n+ ") for n, _ in ea]
     ax.barh(range(len(ea)), [p for _, p in ea], color=["#9ab", "#d96", "#7a7", "#c44", "#c44", "#a22"])
-    ax.set_yticks(range(len(ea)), [n if len(n) < 30 else n[:28] + ".." for n, _ in ea], fontsize=8)
+    ax.set_yticks(range(len(ea)), [n if len(n) < 30 else n[:28] + ".." for n, _ in ea], fontsize=9)
     ax.invert_yaxis()
     ax.set_xlabel("P(Pneumonia = 1 | evidencia)")
     ax.set_title("Explaining away: Gripe confirmada 'explica' a febre")
     for i, (_, p) in enumerate(ea):
-        ax.text(p + 0.005, i, f"{p:.3f}", va="center", fontsize=8)
+        ax.text(p + 0.005, i, f"{p:.3f}", va="center", fontsize=9)
     fig.tight_layout()
-    fig.savefig(FIGS / "01_explaining_away.png", dpi=170)
+    fig.savefig(FIGS / "01_explaining_away.png", dpi=220)
     plt.close(fig)
 
     # Fig 3: erro dos amostradores + ESS
-    fig, axs = plt.subplots(1, 3, figsize=(16, 4.6))
+    fig, axs = plt.subplots(1, 3, figsize=(14, 5.2))
     for ax, q in zip(axs[:2], ("Pneumonia", "Bronquite")):
         e_q = AM[q][0]
         for nome, xs, cor in (("rejeicao", Ns, "#d62"), ("ponderacao", Ns, "#26a"), ("gibbs", Gs, "#2a6")):
@@ -635,7 +660,7 @@ def main():
         ax.set_xlabel("amostras (rejeicao, ponderacao) ou varreduras (Gibbs)")
         ax.set_ylabel(f"erro absoluto medio de P({q} | e)")
         ax.set_title(f"Convergencia: {q} ({SEEDS} sementes)")
-        ax.legend(fontsize=8)
+        ax.legend(fontsize=9)
         ax.grid(alpha=0.3, which="both")
     ax = axs[2]
     ax.loglog(Ns, aceitas.mean(axis=0), "o-", color="#d62", label="rejeicao: amostras aceitas")
@@ -647,7 +672,7 @@ def main():
     ax.legend()
     ax.grid(alpha=0.3, which="both")
     fig.tight_layout()
-    fig.savefig(FIGS / "01_amostradores.png", dpi=170)
+    fig.savefig(FIGS / "01_amostradores.png", dpi=220)
     plt.close(fig)
 
     # Fig 4: aprendizado + escala
@@ -672,10 +697,10 @@ def main():
     ax.set_xlabel("numero de nos n")
     ax.set_ylabel("operacoes (contagem)")
     ax.set_title("Custo da inferencia exata x tamanho da rede")
-    ax.legend(fontsize=8)
+    ax.legend(fontsize=9)
     ax.grid(alpha=0.3, which="both")
     fig.tight_layout()
-    fig.savefig(FIGS / "01_aprendizado_escala.png", dpi=170)
+    fig.savefig(FIGS / "01_aprendizado_escala.png", dpi=220)
     plt.close(fig)
 
     _saida("\nTodos os assert passaram.")
@@ -683,6 +708,7 @@ def main():
 
 
 def restringir_total(J, evid):
+    """Aplica a evidencia a J e devolve a tabela restante (P(evidencia) e a sua soma)."""
     f = J
     for v, val in evid.items():
         f = restringir(f, v, val)

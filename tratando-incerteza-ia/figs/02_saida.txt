@@ -53,4 +53,4 @@ CER do Viterbi bigrama com cada modelo de emissao (p real 0.3; 5 trechos de 3000
   EM de A, B, pi                  35.98 +- 1.07
   (texto cru)                     29.20
 
-Todos os assert passaram. (tempo total ~ 18 s)
+Todos os assert passaram. (tempo total ~ 29 s)

@@ -48,6 +48,9 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
+# fontes legiveis quando a figura e reduzida a largura de uma pagina A4
+plt.rcParams.update({"font.size": 10, "axes.titlesize": 10.5, "axes.labelsize": 10, "legend.fontsize": 9, "xtick.labelsize": 9, "ytick.labelsize": 9})
 import numpy as np
 
 PASTA = Path(__file__).resolve().parent
@@ -61,6 +64,7 @@ _LOG = []
 
 
 def _saida(*args):
+    """Imprime a linha e a acumula em _LOG para gravar em figs/02_saida.txt."""
     linha = " ".join(str(a) for a in args)
     print(linha)
     _LOG.append(linha)
@@ -70,6 +74,7 @@ def _saida(*args):
 # Dados
 # ----------------------------------------------------------------------------
 def carrega_corpus():
+    """Le corpus_pt.txt, remove acentos, deixa a-z e espaco e devolve o texto como array de indices."""
     txt = (PASTA / "corpus_pt.txt").read_text(encoding="utf-8", errors="ignore").lower()
     txt = unicodedata.normalize("NFKD", txt)
     txt = "".join(c for c in txt if not unicodedata.combining(c))
@@ -92,6 +97,7 @@ VIZ = vizinhas_teclado()
 
 
 def matriz_emissao(p):
+    """Matriz B (estado = letra pretendida, observacao = tecla): acerta com 1-p, senao tecla vizinha uniforme."""
     B = np.zeros((S, S))
     for c in ALF:
         i = IDX[c]
@@ -102,6 +108,7 @@ def matriz_emissao(p):
 
 
 def corrompe(seq, p, rng):
+    """Gera as teclas digitadas a partir do texto seq amostrando de B(p) com o rng dado."""
     B = matriz_emissao(p)
     cum = np.cumsum(B, axis=1)
     u = rng.random(len(seq))
@@ -109,6 +116,7 @@ def corrompe(seq, p, rng):
 
 
 def modelo_linguagem(treino, alfa=0.1, beta=5.0):
+    """Estima do treino pi, bigrama A (suavizacao alfa) e trigrama A2 com backoff Dirichlet (beta) para o bigrama."""
     C = np.zeros((S, S))
     np.add.at(C, (treino[:-1], treino[1:]), 1)
     A = (C + alfa) / (C + alfa).sum(axis=1, keepdims=True)
@@ -128,6 +136,8 @@ def forward(pi, A, B, obs):
     log P(obs) = sum log c_t."""
     T, N = len(obs), len(pi)
     alpha, c = np.zeros((T, N)), np.zeros(T)
+    # Escalonamento: dividir alpha_t pela sua soma c_t a cada passo evita underflow em T grande;
+    # a verossimilhanca vem de sum(log c_t) em vez do produto de numeros minusculos.
     a = pi * B[:, obs[0]]
     c[0] = a.sum()
     alpha[0] = a / c[0]
@@ -139,6 +149,7 @@ def forward(pi, A, B, obs):
 
 
 def backward(A, B, obs, c):
+    """Variaveis backward escalonadas pelos mesmos c_t do forward (evita underflow). Saida: beta (T x N)."""
     T, N = len(obs), A.shape[0]
     beta = np.ones((T, N))
     for t in range(T - 2, -1, -1):
@@ -147,6 +158,7 @@ def backward(A, B, obs, c):
 
 
 def viterbi(pi, A, B, obs):
+    """Sequencia de estados mais provavel em log. Entrada: pi, A, B, obs. Saida: caminho (T)."""
     T, N = len(obs), len(pi)
     with np.errstate(divide="ignore"):
         lpi, lA, lB = np.log(pi), np.log(A), np.log(B)
@@ -164,6 +176,7 @@ def viterbi(pi, A, B, obs):
 
 
 def posterior_decode(pi, A, B, obs):
+    """Decodificacao posterior: em cada t, o estado de maior gamma_t = alpha*beta."""
     alpha, c = forward(pi, A, B, obs)
     gamma = alpha * backward(A, B, obs, c)
     return gamma.argmax(axis=1)
@@ -198,6 +211,7 @@ def baum_welch(pi, A, B, obs, iters, aprende_A=True, aprende_B=True, aprende_pi=
 # HMM de segunda ordem (estado = (letra anterior, letra atual))
 # ----------------------------------------------------------------------------
 def viterbi2(pi, A, A2, B, obs):
+    """Viterbi de 2a ordem: o estado e o par (letra anterior, atual); usa o trigrama A2."""
     T = len(obs)
     with np.errstate(divide="ignore"):
         lpi, lA, lA2, lB = np.log(pi), np.log(A), np.log(A2), np.log(B)
@@ -219,10 +233,12 @@ def viterbi2(pi, A, A2, B, obs):
 # Metricas
 # ----------------------------------------------------------------------------
 def cer(a, b):
+    """Taxa de erro por caractere: fracao de posicoes em que a e b diferem."""
     return float(np.mean(a != b))
 
 
 def acerto_palavras(verdade, dec):
+    """Fracao de palavras (separadas por espaco) decodificadas inteiramente certas."""
     esp = np.where(verdade == IDX[" "])[0]
     lim = np.concatenate([[-1], esp, [len(verdade)]])
     ok, tot = 0, 0
@@ -235,11 +251,13 @@ def acerto_palavras(verdade, dec):
 
 
 def texto(seq):
+    """Converte indices em string."""
     return "".join(ALF[i] for i in seq)
 
 
 # ----------------------------------------------------------------------------
 def verifica_forca_bruta():
+    """assert: forward = soma sobre todos os caminhos e Viterbi = melhor caminho num HMM pequeno (3 estados, T=7)."""
     rng = np.random.default_rng(7)
     N, M, T = 3, 4, 7
     pi = rng.dirichlet(np.ones(N))
@@ -270,6 +288,7 @@ def verifica_forca_bruta():
 
 
 def verifica_segunda_ordem():
+    """assert: Viterbi de 2a ordem = forca bruta e = Viterbi de 1a ordem quando o trigrama vem do bigrama."""
     rng = np.random.default_rng(11)
     N, T = 3, 5
     import sys
@@ -297,6 +316,7 @@ def verifica_segunda_ordem():
 
 # ----------------------------------------------------------------------------
 def main():
+    """Executa os experimentos do projeto 2, imprime as tabelas, faz os assert e grava figuras e saida."""
     t_ini = time.perf_counter()
     soma, pmax = verifica_forca_bruta()
     verifica_segunda_ordem()
@@ -393,6 +413,7 @@ def main():
     A_ini = 0.5 * A + 0.5 / S
 
     def kl_linhas(Bt, Be):
+        """KL media entre as linhas de duas matrizes de emissao (verdadeira Bt, estimada Be)."""
         m = Bt > 0
         return float(np.mean([np.sum(Bt[i][m[i]] * np.log(Bt[i][m[i]] / np.maximum(Be[i][m[i]], 1e-12))) for i in range(S)]))
 
@@ -415,6 +436,7 @@ def main():
     # (b) EM com emissao parametrizada: so a taxa p e desconhecida; B(p) tem a forma do teclado.
     #     M-step: p = fracao esperada de posicoes com tecla errada = 1 - mean_t gamma_t(o_t).
     def em_taxa(o, p0=0.10, iters=25):
+        """Baum-Welch com B restrita ao teclado: so a taxa p e aprendida (M-step: p = 1 - fracao esperada de acertos). Devolve (p, historico log P, trajetoria de p)."""
         p, hist, tr = p0, [], [p0]
         for _ in range(iters):
             Bp = matriz_emissao(p)
@@ -481,15 +503,15 @@ def main():
     axs[1].set_xlabel("taxa de erro de digitacao p")
     axs[1].set_ylabel("palavras totalmente corretas (%)")
     axs[1].set_title("Palavras corretas")
-    axs[0].legend(fontsize=8)
+    axs[0].legend(fontsize=9)
     for a in axs:
         a.grid(alpha=0.3)
     fig.tight_layout()
-    fig.savefig(FIGS / "02_cer_vs_ruido.png", dpi=170)
+    fig.savefig(FIGS / "02_cer_vs_ruido.png", dpi=220)
     plt.close(fig)
 
-    fig, axs = plt.subplots(2, 2, figsize=(12.5, 9.5))
-    ax = axs[0, 0]
+    fig, axs = plt.subplots(1, 4, figsize=(18, 6.4))
+    ax = axs[0]
     ax.plot(range(1, len(h_B) + 1), h_B, "o-", ms=3, color="#26a", label="EM livre de B (40 iter.)")
     ax.plot(range(1, len(h_p6) + 1), h_p6, "^-", ms=3, color="#c84", label="EM de p (teclado, 25 iter.)")
     ax.plot(range(1, len(h_full) + 1), h_full, "s-", ms=3, color="#2a6", label="EM de A, B, pi (60 iter.)")
@@ -497,20 +519,20 @@ def main():
     ax.set_xlabel("iteracao de Baum-Welch")
     ax.set_ylabel("log P(observacoes)")
     ax.set_title("Log-verossimilhanca monotona crescente")
-    ax.legend(fontsize=8)
+    ax.legend(fontsize=9, loc="lower right")
     ax.grid(alpha=0.3)
     rotulos = list(ALF.replace(" ", "_"))
-    for ax, M_, tit in ((axs[0, 1], B_real, "B real (teclado, p = 0.30)"), (axs[1, 0], B_livre, "B aprendida pelo EM livre (T=6000): superajuste"),
-                        (axs[1, 1], A, "A: bigrama de letras do corpus")):
+    for ax, M_, tit in ((axs[1], B_real, "B real (teclado, p = 0.30)"), (axs[2], B_livre, "B aprendida pelo EM livre (T=6000): superajuste"),
+                        (axs[3], A, "A: bigrama de letras do corpus")):
         im = ax.imshow(M_, cmap="viridis")
-        ax.set_xticks(range(S), rotulos, fontsize=6)
-        ax.set_yticks(range(S), rotulos, fontsize=6)
+        ax.set_xticks(range(S), rotulos, fontsize=8)
+        ax.set_yticks(range(S), rotulos, fontsize=8)
         ax.set_title(tit)
         ax.set_xlabel("tecla digitada" if M_ is not A else "letra seguinte")
         ax.set_ylabel("letra pretendida" if M_ is not A else "letra atual")
         fig.colorbar(im, ax=ax, fraction=0.046)
     fig.tight_layout()
-    fig.savefig(FIGS / "02_baum_welch.png", dpi=170)
+    fig.savefig(FIGS / "02_baum_welch.png", dpi=220)
     plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(13, 4.6))
@@ -522,7 +544,7 @@ def main():
             y = -(r * 5.0 + q)
             if r == 0:
                 pass
-            ax.text(-2.5, y, nomes[q], fontsize=7.5, ha="right", va="center")
+            ax.text(-2.5, y, nomes[q], fontsize=9, ha="right", va="center")
             for j, ch in enumerate(tr):
                 err_ = q > 0 and ch != trechos[0][j]
                 ax.text(j, y, ALF[ch].replace(" ", "·"), family="monospace", fontsize=9, ha="center", va="center",
@@ -532,7 +554,7 @@ def main():
     ax.axis("off")
     ax.set_title("Exemplo de decodificacao (p = 0.20); vermelho = caractere diferente do pretendido; · = espaco")
     fig.tight_layout()
-    fig.savefig(FIGS / "02_exemplo.png", dpi=170)
+    fig.savefig(FIGS / "02_exemplo.png", dpi=220)
     plt.close(fig)
 
     _saida(f"\nTodos os assert passaram. (tempo total ~ {time.perf_counter() - t_ini:.0f} s)")

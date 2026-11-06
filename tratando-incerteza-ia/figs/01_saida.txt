@@ -27,7 +27,7 @@ erro absoluto medio em 20 sementes (mesma consulta/evidencia):
    3000     0.0282       32.4      0.0026     236          0.0039
   10000     0.0189      104.2      0.0015     814          0.0040
   30000     0.0076      319.7      0.0012    2435               -
-Gibbs: 0.76 s por cadeia de 10200 varreduras (so tempo; varia)
+Gibbs: 1.18 s por cadeia de 10200 varreduras (so tempo; varia)
 
 === AMOSTRADORES (consulta P(Bronquite=1 | evidencia) = 0.6041; P(evidencia)=0.01062) ===
 erro absoluto medio em 20 sementes (mesma consulta/evidencia):
@@ -38,7 +38,7 @@ erro absoluto medio em 20 sementes (mesma consulta/evidencia):
    3000     0.0823       32.4      0.0331     236          0.0090
   10000     0.0435      104.2      0.0159     814          0.0089
   30000     0.0222      319.7      0.0093    2435               -
-Gibbs: 0.80 s por cadeia de 10200 varreduras (so tempo; varia)
+Gibbs: 1.36 s por cadeia de 10200 varreduras (so tempo; varia)
 
 === APRENDIZADO DE PARAMETROS (estrutura conhecida) ===
        N   KL (a=0.01)    KL (a=1)   |erro posteriori|

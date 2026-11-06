@@ -42,6 +42,9 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
+# fontes legiveis quando a figura e reduzida a largura de uma pagina A4
+plt.rcParams.update({"font.size": 10, "axes.titlesize": 10.5, "axes.labelsize": 10, "legend.fontsize": 9, "xtick.labelsize": 9, "ytick.labelsize": 9})
 import numpy as np
 from matplotlib.patches import Ellipse
 
@@ -53,6 +56,7 @@ _LOG = []
 
 
 def _saida(*args):
+    """Imprime a linha e a acumula em _LOG para gravar em figs/03_saida.txt."""
     linha = " ".join(str(a) for a in args)
     print(linha)
     _LOG.append(linha)
@@ -68,10 +72,12 @@ H = np.array([[1, 0, 0, 0], [0, 1, 0, 0]], float)
 
 
 def Q_de(q):
+    """Covariancia do ruido de processo Q = q G G' (aceleracao branca de intensidade q)."""
     return q * G @ G.T
 
 
 def R_de(s):
+    """Covariancia do ruido de medida R = s^2 I (2x2)."""
     return s ** 2 * np.eye(2)
 
 
@@ -95,10 +101,12 @@ def kalman(z, mask, q, s, m0, P0, joseph=True, dtype=np.float64):
             P = Fm @ P @ Fm.T + Qm
         xp[k], Pp[k] = x, P
         if mask[k]:
-            nu = z[k].astype(dtype) - Hm @ x
+            nu = z[k].astype(dtype) - Hm @ x   # inovacao; sem medida (mask False) so ha predicao e P cresce
             Sk = Hm @ P @ Hm.T + Rm
             K = P @ Hm.T @ np.linalg.inv(Sk)
             x = x + K @ nu
+            # Forma de Joseph: P = (I-KH) P (I-KH)' + K R K' mantem P simetrica e semidefinida
+            # positiva mesmo com erro de arredondamento; (I-KH)P pode perde-la (ver ablacao float32).
             if joseph:
                 A_ = I4 - K @ Hm
                 P = A_ @ P @ A_.T + K @ Rm @ K.T
@@ -125,6 +133,7 @@ def rts(res):
 # Filtro de particulas (bootstrap) com o mesmo modelo
 # ----------------------------------------------------------------------------
 def particulas(z, mask, q, s, m0, P0, N, rng):
+    """Filtro de particulas bootstrap (reamostragem sistematica quando ESS < N/2). Entrada: medidas z, mascara, q, s, priori (m0,P0), N, rng. Saida: media filtrada (T x 4)."""
     T = len(z)
     # Inicializacao: priori de 4 dimensoes com desvio de 500 m nao deixa quase nenhuma
     # particula perto da primeira medida (desvio 20 m) e os pesos degeneram. Por isso
@@ -156,6 +165,7 @@ def particulas(z, mask, q, s, m0, P0, N, rng):
 # Linhas de base
 # ----------------------------------------------------------------------------
 def crua(z, mask):
+    """Linha de base: usa a ultima medida disponivel como posicao."""
     out = np.zeros((len(z), 2))
     ult = z[np.argmax(mask)]
     for k in range(len(z)):
@@ -166,6 +176,7 @@ def crua(z, mask):
 
 
 def media_movel(z, mask, w=5):
+    """Linha de base: media das medidas disponiveis nos ultimos w passos (retem o ultimo valor se nao houver)."""
     out = np.zeros((len(z), 2))
     ult = z[np.argmax(mask)]
     for k in range(len(z)):
@@ -187,6 +198,7 @@ P0_B = np.diag([500.0 ** 2, 500.0 ** 2, 15.0 ** 2, 15.0 ** 2])
 
 
 def trajetoria_oito():
+    """Trajetoria verdadeira em 8 (Lissajous): estados [px, py, vx, vy] em cada passo."""
     t = np.arange(T_B) * DT
     px, py = 300 + 400 * np.sin(0.025 * t + 0.5), 150 + 250 * np.sin(0.05 * t)
     vx, vy = 400 * 0.025 * np.cos(0.025 * t + 0.5), 250 * 0.05 * np.cos(0.05 * t)
@@ -194,6 +206,7 @@ def trajetoria_oito():
 
 
 def medidas_B(verd, taxa_perda, rng):
+    """Medidas ruidosas da trajetoria, com perda aleatoria e o tunel (sem sinal); devolve (z, mascara)."""
     z = verd[:, :2] + SIGMA * rng.standard_normal((len(verd), 2))
     mask = rng.random(len(verd)) >= taxa_perda
     mask[TUNEL[0]:TUNEL[1]] = False
@@ -202,6 +215,7 @@ def medidas_B(verd, taxa_perda, rng):
 
 
 def rmse(est_pos, verd, sel=None):
+    """Raiz do erro quadratico medio de posicao; sel opcional restringe os passos."""
     e = ((est_pos - verd[:, :2]) ** 2).sum(axis=1)
     if sel is not None:
         e = e[sel]
@@ -248,6 +262,7 @@ def map_em_lote(z, mask, q, s, m0, P0):
 
 
 def verifica_kalman():
+    """assert: KF e RTS = solucao MAP em lote, ganho estacionario = alfa-beta de Kalata, P simetrica PSD."""
     rng = np.random.default_rng(3)
     q, s = 0.3, 5.0
     m0, P0 = np.zeros(4), np.diag([30.0, 30.0, 4.0, 4.0]) ** 2
@@ -294,6 +309,7 @@ def chi2_lim(nu, z):
 
 
 def elipse(ax, centro, P2, cor, alpha=0.25):
+    """Desenha a elipse de confianca de 95% (qui-quadrado 2 g.l. = 5.991) de uma covariancia 2x2."""
     w, V = np.linalg.eigh(P2)
     ang = np.degrees(np.arctan2(V[1, 1], V[0, 1]))
     ax.add_patch(Ellipse(centro, 2 * np.sqrt(5.991 * w[1]), 2 * np.sqrt(5.991 * w[0]), angle=ang,
@@ -302,6 +318,7 @@ def elipse(ax, centro, P2, cor, alpha=0.25):
 
 # ----------------------------------------------------------------------------
 def main():
+    """Executa os experimentos do projeto 3, imprime as tabelas, faz os assert e grava figuras e saida."""
     t_ini = time.perf_counter()
     dmax = verifica_kalman()
     ab = verifica_alfa_beta()
@@ -496,7 +513,7 @@ def main():
     ax.set_xlabel("x (m)")
     ax.set_ylabel("y (m)")
     ax.set_title("Voo exemplo: elipses = regiao de 95% da posicao estimada (a cada 10 s)")
-    ax.legend(fontsize=8, loc="lower right")
+    ax.legend(fontsize=9, loc="lower right")
     ax = axs[1]
     t = np.arange(T_B)
     ax.fill_between([TUNEL[0], TUNEL[1]], 0, 1, color="#c33", alpha=0.12, transform=ax.get_xaxis_transform())
@@ -506,19 +523,19 @@ def main():
     ax.set_xlabel("passo (s)")
     ax.set_ylabel("erro de posicao (m)")
     ax.set_title("Erro e incerteza ao longo do tempo")
-    ax.legend(fontsize=8, loc="upper left")
+    ax.legend(fontsize=9, loc="upper left")
     ax.grid(alpha=0.3)
     fig.tight_layout()
-    fig.savefig(FIGS / "03_trajetoria.png", dpi=170)
+    fig.savefig(FIGS / "03_trajetoria.png", dpi=220)
     plt.close(fig)
 
     cores = ["#999", "#c84", "#26a", "#2a6", "#a4c"]
-    fig, axs = plt.subplots(1, 3, figsize=(16, 4.6))
+    fig, axs = plt.subplots(1, 3, figsize=(14, 5.2))
     ax = axs[0]
     x = np.arange(len(nomes))
     ax.bar(x - 0.2, tot.mean(axis=1), 0.4, yerr=tot.std(axis=1), color=cores, label="total", capsize=3)
     ax.bar(x + 0.2, tun.mean(axis=1), 0.4, yerr=tun.std(axis=1), color=cores, alpha=0.45, hatch="//", label="so no tunel", capsize=3)
-    ax.set_xticks(x, [n.replace(" ", "\n", 1) for n in nomes], fontsize=8)
+    ax.set_xticks(x, [n.replace(" ", "\n", 1) for n in nomes], fontsize=9)
     ax.set_ylabel("RMSE de posicao (m)")
     ax.set_title(f"{NS} voos: cheio = total, hachurado = tunel")
     ax.grid(alpha=0.3, axis="y")
@@ -529,7 +546,7 @@ def main():
     ax.set_xlabel("taxa de perda aleatoria de leituras")
     ax.set_ylabel("RMSE de posicao (m)")
     ax.set_title("Degradacao com a perda de dados")
-    ax.legend(fontsize=8)
+    ax.legend(fontsize=9)
     ax.grid(alpha=0.3)
     ax = axs[2]
     ax.loglog(Nps, dist.mean(axis=1), "o-", color="#a4c", label="particulas vs. KF")
@@ -537,13 +554,13 @@ def main():
     ax.set_xlabel("numero de particulas N")
     ax.set_ylabel("distancia RMS a media do KF (m)")
     ax.set_title("Filtro de particulas converge ao KF")
-    ax.legend(fontsize=8)
+    ax.legend(fontsize=9)
     ax.grid(alpha=0.3, which="both")
     fig.tight_layout()
-    fig.savefig(FIGS / "03_comparacao.png", dpi=170)
+    fig.savefig(FIGS / "03_comparacao.png", dpi=220)
     plt.close(fig)
 
-    fig, axs = plt.subplots(1, 3, figsize=(16, 4.8))
+    fig, axs = plt.subplots(1, 3, figsize=(14, 5.2))
     ax = axs[0]
     cs = ["#2a6", "#d62", "#26a", "#a4c"]
     for (n, v), c in zip(nees.items(), cs):
@@ -553,7 +570,7 @@ def main():
     ax.set_xlabel("passo")
     ax.set_ylabel(f"NEES medio ({M_m} execucoes)")
     ax.set_title("Consistencia: NEES (esperado 4)")
-    ax.legend(fontsize=7)
+    ax.legend(fontsize=9)
     ax.grid(alpha=0.3, which="both")
     ax = axs[1]
     for (n, v), c in zip(nis.items(), cs):
@@ -569,13 +586,13 @@ def main():
     ax.set_yticks(range(len(escalas)), [f"{e:g}" for e in escalas])
     for i in range(len(escalas)):
         for j in range(len(escalas)):
-            ax.text(j, i, f"{grade[i, j]:.0f}", ha="center", va="center", fontsize=8, color="w" if grade[i, j] > grade.mean() else "k")
+            ax.text(j, i, f"{grade[i, j]:.0f}", ha="center", va="center", fontsize=9, color="w" if grade[i, j] > grade.mean() else "k")
     ax.set_xlabel("fator em s^2 (ruido de medida assumido)")
     ax.set_ylabel("fator em q (ruido de processo assumido)")
     ax.set_title("RMSE (m) do KF no drone vs. Q e R assumidos")
     fig.colorbar(im, ax=ax, fraction=0.046)
     fig.tight_layout()
-    fig.savefig(FIGS / "03_consistencia_sensibilidade.png", dpi=170)
+    fig.savefig(FIGS / "03_consistencia_sensibilidade.png", dpi=220)
     plt.close(fig)
 
     _saida(f"\nTodos os assert passaram. (tempo total ~ {time.perf_counter() - t_ini:.0f} s)")
