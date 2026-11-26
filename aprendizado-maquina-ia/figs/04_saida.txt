@@ -1,0 +1,55 @@
+Verificacao dos componentes escritos a mao:
+  conv im2col x F.conv2d (4 formas, saida e 3 gradientes): max |dif| = 4.20e-05
+  entropia cruzada propria x F.cross_entropy (logits ate +-100, suavizacao 0 e 0.1): max |dif| = 7.63e-06
+  SGD Nesterov proprio x torch.optim.SGD (20 passos): max |dif pesos| = 5.96e-08
+  gradiente autograd x diferencas finitas centrais (CNN minima, float64): max |dif| = 1.82e-10
+
+Fashion-MNIST: treino 55000, validacao 5000, teste 10000 (threads: 4)
+
+Comparacao principal: 20 epocas, lote 128, SGD Nesterov (lr 0.05, wd 5e-4) + cosseno, semente 0
+(acc treino = modo de avaliacao, 10 mil imagens de treino; LS = suavizacao de rotulos 0.1; TTA = media com a imagem espelhada)
+modelo                   parametros  acc treino   acc val  acc teste  teste+TTA  perda teste  tempo (s)
+Softmax linear                 7850      0.8731    0.8536     0.8450          -       0.4410          5
+MLP 256-128                  235146      0.9490    0.8980     0.8998          -       0.2887         32
+LeNet-5 (conv propria)        61706      0.9429    0.9138     0.9112          -       0.2490       4091
+CNN-16 BN+drop+aug           218586      0.9347    0.9278     0.9275     0.9293       0.2024       1494
+CNN-32 BN+drop+aug+LS        468010      0.9461    0.9366     0.9346     0.9366       0.2564       2446
+
+IC 95% da acuracia de teste (bootstrap pareado, 2000 reamostragens):
+  Softmax linear           0.8450  [0.8379, 0.8520]
+  MLP 256-128              0.8998  [0.8937, 0.9056]
+  LeNet-5 (conv propria)   0.9112  [0.9056, 0.9167]
+  CNN-16 BN+drop+aug       0.9275  [0.9225, 0.9323]
+  CNN-32 BN+drop+aug+LS    0.9346  [0.9294, 0.9391]
+  CNN-32 + TTA             0.9366  [0.9314, 0.9411]
+
+McNemar exato (A acerta e B erra / A erra e B acerta / p bilateral):
+  CNN-32 + TTA           x CNN-32 BN+drop+aug+LS     54    34   p = 4.22e-02
+  CNN-32 BN+drop+aug+LS  x CNN-16 BN+drop+aug       198   127   p = 9.73e-05
+  CNN-32 BN+drop+aug+LS  x LeNet-5 (conv propria)   441   207   p = 2.13e-20
+  LeNet-5 (conv propria) x MLP 256-128              365   251   p = 4.99e-06
+  MLP 256-128            x Softmax linear           752   204   p = 2.45e-74
+
+Acuracia por classe (CNN-32 BN+drop+aug+LS, com TTA) e confusao mais frequente:
+  camiseta   0.895   mais confundida com camisa    (76 casos)
+  calca      0.988   mais confundida com vestido   (9 casos)
+  pulover    0.912   mais confundida com camisa    (38 casos)
+  vestido    0.942   mais confundida com camisa    (23 casos)
+  casaco     0.923   mais confundida com camisa    (37 casos)
+  sandalia   0.980   mais confundida com tenis     (14 casos)
+  camisa     0.790   mais confundida com camiseta  (88 casos)
+  tenis      0.981   mais confundida com bota      (16 casos)
+  bolsa      0.988   mais confundida com vestido   (4 casos)
+  bota       0.967   mais confundida com tenis     (28 casos)
+Erros dentro do grupo 'parte de cima' (camiseta/pulover/casaco/camisa): 405 de 634 erros (63.9%)
+
+Ablacao da CNN-16: 20000 imagens de treino, 15 epocas, sementes 0 e 1 (pareadas), acuracia de teste:
+variante                    semente 0  semente 1    media   dif. vs completa (p.p.)  acc treino - val
+completa (BN+drop+aug)         0.9105     0.9086   0.9095                      0.00            0.0081
+sem BatchNorm                  0.8977     0.8982   0.8979                     -1.16            0.0045
+sem dropout                    0.9175     0.9181   0.9178                      0.83            0.0178
+sem aumento de dados           0.9165     0.9166   0.9165                      0.70            0.0385
+1 bloco (rasa)                 0.8931     0.8976   0.8954                     -1.42            0.0059
+nada (sem BN/drop/aug)         0.9033     0.9053   0.9043                     -0.52            0.0572
+
+Todos os assert passaram. (tempo total ~ 55 s)

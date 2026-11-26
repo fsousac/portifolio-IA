@@ -1,0 +1,110 @@
+Digits (UCI): 1797 imagens 8x8, 64 atributos; rotulos usados SO na avaliacao
+
+Verificacao contra o scikit-learn e propriedades matematicas:
+  PCA: max |dif| variancia explicada = 1.39e-16
+  PCA: erro de reconstrucao == soma dos autovalores descartados (d = 5, 20): OK
+  k-means++ melhor de 10: inercia = 4552.59; sklearn KMeans(n_init=10) = 4551.52
+  k-means: inercia monotona nao crescente em 40 execucoes: OK
+  ARI proprio = 0.662667 / sklearn = 0.662667;  silhueta propria = 0.182318 / sklearn = 0.182318
+  GMM full (d=10, k=8): 63 iter. EM, logL monotona, |logL proprio - sklearn.score| = 0.00e+00
+  GMM diag (d=10, k=8): 37 iter. EM, logL monotona, |logL proprio - sklearn.score| = 0.00e+00
+  DBSCAN (PCA-10, eps=0.7, min=8): 15 grupos, 851 ruido; nucleos e particao == sklearn
+  DBSCAN (PCA-10, eps=0.8, min=5): 17 grupos, 218 ruido; nucleos e particao == sklearn
+  Grafo 2-NN: L simetrico, espectro em [-8.2e-17, 1.941], autovalores ~0: 8 == componentes conexas: 8
+  Grafo 3-NN: L simetrico, espectro em [-5.9e-16, 1.834], autovalores ~0: 2 == componentes conexas: 2
+  Grafo 10-NN: L simetrico, espectro em [1.3e-16, 1.419], autovalores ~0: 1 == componentes conexas: 1
+  Espectral proprio (10-NN): ARI = 0.8220; sklearn SpectralClustering = 0.7565; concordancia ARI entre os dois = 0.8720
+  Propagacao de rotulos: forma fechada x iteracao de ponto fixo, max |dif| = 8.1e-12
+
+Variancia acumulada do PCA: d=2: 0.285, d=5: 0.545, d=10: 0.738, d=20: 0.894, d=30: 0.959, d=40: 0.988
+
+Ablacao: inicializacao do k-means (64 dims, 20 sementes pareadas, 1 inicio cada):
+k   init              inercia inicial           inercia final         iteracoes                 ARI
+10  aleatoria   9022.0742 +- 547.4198    4602.8837 +- 77.6166 20.3000 +- 9.9000    0.6325 +- 0.0498
+10  k-means++   8852.3268 +- 524.0044    4608.8123 +- 66.1307 18.2000 +- 7.8109    0.6063 +- 0.0379
+    pareado k=10: inercia inicial ++ menor em 12/20 (dif. media -169.7); inercia final ++ menor em 7/20 (dif. media 5.93)
+50  aleatoria   5195.4828 +- 174.3172    2873.5906 +- 35.1535 20.1000 +- 5.3793    0.3306 +- 0.0154
+50  k-means++   5042.7463 +- 156.3425    2857.9645 +- 22.8724 18.5500 +- 4.4777    0.3357 +- 0.0181
+    pareado k=50: inercia inicial ++ menor em 15/20 (dif. media -152.7); inercia final ++ menor em 11/20 (dif. media -15.63)
+Controle: 25 gaussianas bem separadas (grade 5x5, 1000 pontos), inercia da particao verdadeira = 12.615
+    aleatoria  : acha o otimo global em 0% de 50 sementes; inercia final media = 82.767
+    k-means++  : acha o otimo global em 24% de 50 sementes; inercia final media = 32.735
+
+ARI x dimensao do PCA (k=10; k-means: 10 sementes x melhor de 5; GMM full: 5 sementes):
+d                  k-means++              GMM full              GMM diag
+2           0.3972 +- 0.0089      0.3795 +- 0.0228      0.3813 +- 0.0182
+5           0.5539 +- 0.0008      0.5834 +- 0.0169      0.5448 +- 0.0258
+10          0.6434 +- 0.0119      0.6839 +- 0.0476      0.6047 +- 0.0401
+20          0.6642 +- 0.0087      0.7734 +- 0.0654      0.6831 +- 0.0510
+30          0.6498 +- 0.0394      0.7433 +- 0.0848      0.6551 +- 0.0881
+64          0.6479 +- 0.0292    (instavel em d=64)      0.6253 +- 0.0452
+
+Selecao de k sem rotulos (PCA-20): inercia, silhueta, BIC do GMM full e diag (menor = melhor):
+k       inercia  silhueta    BIC full    BIC diag  ARI k-means
+4        5398.3    0.1467     22036.8     30333.8       0.2853
+5        4963.2    0.1599     20423.0     28818.2       0.3846
+6        4621.5    0.1750     19197.5     27862.6       0.3889
+7        4339.0    0.1850     18487.0     26661.7       0.4685
+8        4064.2    0.2077     17690.2     25572.8       0.5800
+9        3821.0    0.2199     17620.3     25298.2       0.5995
+10       3680.4    0.2126     17996.5     24815.5       0.6650
+11       3557.2    0.2101     18268.0     24414.4       0.6460
+12       3429.9    0.2139     19060.3     24080.7       0.7172
+13       3331.7    0.2154     19791.8     23582.4       0.7111
+14       3260.4    0.2020     20774.9     23494.7       0.6758
+15       3172.7    0.2136     21780.6     23237.3       0.6879
+16       3062.3    0.2210     22933.7     23147.7       0.6924
+17       3057.9    0.2145     23568.3     22811.5       0.6750
+18       2995.5    0.2045     24743.0     22457.9       0.6576
+19       2929.4    0.2008     26127.4     22266.5       0.6089
+20       2917.3    0.1918     27042.9     22232.7       0.6170
+k escolhido: silhueta -> 16, BIC full -> 9, BIC diag -> 20, maior ARI -> 12
+
+Acuracia de classificacao rotulando SO a imagem mais central de cada grupo (k-means++ melhor de 5, 10 sementes):
+k (= rotulos pedidos)   espaco                acuracia   acc. Hungaro (k=10)
+10                      64 px         0.7893 +- 0.0367      0.7841 +- 0.0425
+20                      64 px         0.9090 +- 0.0135                      
+30                      64 px         0.9218 +- 0.0106                      
+50                      64 px         0.9456 +- 0.0116                      
+10                      PCA-20        0.7839 +- 0.0190      0.7789 +- 0.0282
+20                      PCA-20        0.9040 +- 0.0096                      
+30                      PCA-20        0.9137 +- 0.0100                      
+50                      PCA-20        0.9434 +- 0.0053                      
+
+DBSCAN em PCA-10 (min_pts = 8), varrendo eps:
+eps     grupos   % ruido  ARI (sem ruido)
+0.6         17      73.6           0.8590
+0.65        18      60.2           0.9116
+0.7         15      47.4           0.9512
+0.75        16      32.3           0.9568
+0.8         16      20.7           0.8867
+0.85        11      13.2           0.3588
+0.9          7       8.2           0.3068
+
+Agrupamento espectral (Ng-Jordan-Weiss, grafo k-NN, 64 px, k = 10 grupos, 5 sementes do k-means final):
+vizinhos                   ARI         acc Hungaro  eigengap -> k
+5             0.7776 +- 0.0000    0.8169 +- 0.0000             21
+10            0.8228 +- 0.0007    0.8889 +- 0.0003             11
+15            0.7527 +- 0.0000    0.8041 +- 0.0000             11
+20            0.7867 +- 0.0340    0.8519 +- 0.0461             18
+GMM full em PCA-20 escolhendo o melhor de 10 inicios pela log-verossimilhanca (sem rotulos), 5 repeticoes: ARI = 0.7923 +- 0.0506
+Resumo (ARI com os digitos, k = 10):  k-means++ (64 px): 0.648; k-means++ (PCA-20): 0.664; GMM full (PCA-20): 0.773; GMM full melhor logL: 0.792; DBSCAN eps=0.75 (sem ruido): 0.957; Espectral 10-NN: 0.823
+Pareado (mesmas 5 sementes): ARI(espectral) - ARI(k-means++ 64 px) = 0.166, espectral melhor em 5/5
+
+Classificacao com m imagens rotuladas por um humano (acuracia nas 1797 imagens, 10 sementes):
+  A: k-means++ (64 px, k = m) e cada grupo herda o rotulo da imagem central (secao 4)
+  B: 1-vizinho mais proximo usando m imagens sorteadas ao acaso
+  C: propagacao de rotulos no grafo 10-NN a partir de m imagens sorteadas
+  D: propagacao de rotulos a partir das MESMAS m imagens centrais de A (ablacao pareada: so muda como o rotulo se espalha)
+  E: propagacao de rotulos a partir das m imagens centrais dos grupos ESPECTRAIS (k-means em m autovetores)
+m       A: centrais k-means     B: 1-NN aleatorio     C: propag. aleat.   D: propag. centr. A  E: propag. centr. esp.
+10         0.7893 +- 0.0367      0.4619 +- 0.0528      0.5659 +- 0.0848      0.8570 +- 0.0494        0.8954 +- 0.0014
+20         0.9090 +- 0.0135      0.6742 +- 0.0557      0.7440 +- 0.0770      0.9433 +- 0.0244        0.9014 +- 0.0259
+30         0.9218 +- 0.0106      0.7486 +- 0.0455      0.7884 +- 0.0662      0.9525 +- 0.0208        0.9235 +- 0.0323
+50         0.9456 +- 0.0116      0.8392 +- 0.0251      0.8569 +- 0.0566      0.9640 +- 0.0076        0.9486 +- 0.0286
+  m=10: pareado D - A = +6.77 p.p. (D melhor em 10/10)
+  m=20: pareado D - A = +3.43 p.p. (D melhor em 9/10)
+  m=30: pareado D - A = +3.07 p.p. (D melhor em 9/10)
+  m=50: pareado D - A = +1.84 p.p. (D melhor em 10/10)
+
+Todos os assert passaram. (tempo total ~ 170 s)

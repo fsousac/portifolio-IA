@@ -1,0 +1,81 @@
+Breast Cancer Wisconsin: 569 exames, 30 atributos, 212 malignos
+
+Verificacao contra o scikit-learn (referencia independente):
+modelo                       acc treino (nosso/sk)   concordancia teste
+CART Gini prof=1                0.9272 / 0.9272                  1.0000
+CART Gini prof=2                0.9507 / 0.9507                  1.0000
+CART Gini prof=3                0.9789 / 0.9789                  1.0000
+CART Gini prof=5                0.9953 / 0.9953                  0.9930
+CART Gini prof=None             1.0000 / 1.0000                  0.9930
+CART SSE prof=2                  max |dif| teste =             6.94e-17
+CART SSE prof=4                  max |dif| teste =             5.55e-17
+Logistica L2 (C=1)                max |dif| coef =             1.49e-06
+AUC propria vs sklearn        iguais (com empates)
+Rotation Forest                  max |R^T R - I| =             8.88e-16
+Platt (logistica 1-D)           max |dif| (a, b) =             1.88e-10
+
+Validacao cruzada estratificada 5 dobras x 5 sementes (25 dobras pareadas), media +- IC95%:
+(ECE = erro de calibracao das probabilidades fora-da-dobra, media das 5 sementes)
+metodo                              acuracia              AUC         log-loss     ECE
+Logistica L2                   0.9807 +-0.0048    0.9956 +-0.0021    0.0728 +-0.0130  0.0182
+CART prof=3                    0.9290 +-0.0096    0.9372 +-0.0138    0.6319 +-0.1484  0.0459
+CART profunda                  0.9248 +-0.0065    0.9223 +-0.0080    2.0785 +-0.1809  0.0752
+Bagging (todos atrib.)         0.9533 +-0.0077    0.9882 +-0.0035    0.1811 +-0.0450  0.0237
+Random Forest                  0.9585 +-0.0084    0.9905 +-0.0034    0.1483 +-0.0362  0.0295
+RF + Platt (OOB)               0.9603 +-0.0081    0.9905 +-0.0034    0.1091 +-0.0177  0.0173
+Rotation Forest                0.9712 +-0.0058    0.9924 +-0.0032    0.1353 +-0.0410  0.0261
+Boosting nu=1.0                0.9652 +-0.0059    0.9921 +-0.0031    0.2183 +-0.0536  0.0307
+Boosting nu=0.1                0.9610 +-0.0080    0.9928 +-0.0023    0.1037 +-0.0172  0.0206
+Boosting estoc. CV aninh.      0.9666 +-0.0044    0.9923 +-0.0025    0.0967 +-0.0123  0.0164
+Stacking (4 bases)             0.9786 +-0.0050    0.9951 +-0.0021    0.0772 +-0.0148  0.0170
+Boosting aninhado, (profundidade, n de arvores) escolhidos pela CV interna nas 25 dobras: prof 1: 18x, prof 3: 7x; n medio = 292 (min 104, max 400)
+Pareado acc Rotation Forest - Random Forest: +0.0126 +- 0.0056 (IC95%), Rotation Forest melhor em 17/25 dobras
+Pareado ll  Rotation Forest - Random Forest: -0.0130 +- 0.0289 (IC95%), Rotation Forest melhor em 23/25 dobras
+Pareado acc Stacking (4 bases) - Random Forest: +0.0200 +- 0.0074 (IC95%), Stacking (4 bases) melhor em 21/25 dobras
+Pareado ll  Stacking (4 bases) - Random Forest: -0.0712 +- 0.0338 (IC95%), Stacking (4 bases) melhor em 24/25 dobras
+Pareado acc Stacking (4 bases) - Logistica L2: -0.0021 +- 0.0038 (IC95%), Stacking (4 bases) melhor em 6/25 dobras
+Pareado ll  Stacking (4 bases) - Logistica L2: +0.0043 +- 0.0058 (IC95%), Stacking (4 bases) melhor em 14/25 dobras
+Pareado acc Boosting estoc. CV aninh. - Boosting nu=0.1: +0.0056 +- 0.0077 (IC95%), Boosting estoc. CV aninh. melhor em 9/25 dobras
+Pareado ll  Boosting estoc. CV aninh. - Boosting nu=0.1: -0.0070 +- 0.0090 (IC95%), Boosting estoc. CV aninh. melhor em 16/25 dobras
+Pareado acc RF + Platt (OOB) - Random Forest: +0.0018 +- 0.0021 (IC95%), RF + Platt (OOB) melhor em 7/25 dobras
+Pareado ll  RF + Platt (OOB) - Random Forest: -0.0393 +- 0.0325 (IC95%), RF + Platt (OOB) melhor em 15/25 dobras
+
+Diferenca pareada AUC(RF) - AUC(CART profunda) = 0.0682 +- 0.0065 (IC95%); RF melhor em 25/25 dobras
+Diferenca pareada log-loss(nu=0.1) - log-loss(nu=1.0) = -0.1145 +- 0.0427
+
+Random Forest (300 arvores, 75% treino): erro OOB = 0.0493, erro de teste = 0.0490, erro CV 5x5 (100 arv.) = 0.0415
+Boosting nu=1.0: log-loss treino final = 0.0000, iteracoes em que a perda de treino SUBIU = 1, teste min = 0.1536 (iter 8), teste final = 0.2458
+Boosting nu=0.3: log-loss treino final = 0.0000, iteracoes em que a perda de treino SUBIU = 0, teste min = 0.1291 (iter 27), teste final = 0.2306
+Boosting nu=0.1: log-loss treino final = 0.0004, iteracoes em que a perda de treino SUBIU = 0, teste min = 0.1187 (iter 131), teste final = 0.1656
+
+Dados sinteticos (1000 x 20, 6 informativos), acuracia no rotulo LIMPO de teste, CV 5x2:
+ruido        Logistica L2    CART profunda    Random Forest  Rotation Forest  Boosting nu=0.1 Boosting estoc. 
+0.0          0.7885+-0.020     0.8370+-0.024     0.9150+-0.012     0.9290+-0.007     0.8955+-0.012     0.9135+-0.006
+0.1          0.7770+-0.021     0.7645+-0.026     0.8955+-0.015     0.9100+-0.012     0.8535+-0.014     0.8795+-0.013
+0.2          0.7680+-0.018     0.6930+-0.033     0.8660+-0.015     0.8680+-0.023     0.8100+-0.018     0.8440+-0.024
+0.3          0.7540+-0.018     0.6205+-0.028     0.7765+-0.015     0.7790+-0.024     0.7250+-0.018     0.7790+-0.029
+Queda de acuracia de 0% para 30% de ruido: Logistica L2 0.034, CART profunda 0.216, Random Forest 0.138, Rotation Forest 0.150, Boosting nu=0.1 0.171, Boosting estoc. CV aninh. 0.135
+
+Decisao com custo assimetrico (FN = 10, FP = 1), probabilidades fora-da-dobra (5 sementes):
+(limiar de Bayes 1/11 e fixado ANTES de ver os dados: estimativa honesta; 'melhor lim' e escolhido a posteriori: otimista)
+metodo                      custo lim=0.5 custo lim=1/11  FN em 1/11  melhor lim    custo
+Logistica L2                       0.1459         0.1206         3.2        0.21   0.1107
+Random Forest                      0.2619         0.1670         3.0        0.21   0.1276
+RF + Platt (OOB)                   0.2517         0.1290         4.4        0.08   0.1251
+Rotation Forest                    0.1782         0.1434         2.6        0.31   0.1033
+Boosting estoc. CV aninh.          0.2295         0.1290         4.2        0.10   0.1269
+Stacking (4 bases)                 0.1322         0.1286         4.0        0.23   0.1083
+Matriz de confusao RF+Platt (semente 0), limiar 0.500: [[VN FP] [FN VP]] = [[348, 9], [11, 201]]
+Matriz de confusao RF+Platt (semente 0), limiar 0.091: [[VN FP] [FN VP]] = [[329, 28], [4, 208]]
+
+Importancia por permutacao (queda de AUC no teste, RF de 300 arvores), top 8:
+  worst radius              0.0128
+  worst area                0.0102
+  worst concave points      0.0091
+  worst perimeter           0.0065
+  mean concave points       0.0055
+  worst concavity           0.0035
+  area error                0.0029
+  mean area                 0.0027
+
+Todos os assert passaram. (tempo total ~ 634 s)

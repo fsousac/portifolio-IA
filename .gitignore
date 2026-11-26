@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# datasets baixados em tempo de execucao (modulo 9.4)
+aprendizado-maquina-ia/dados/

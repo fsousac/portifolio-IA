@@ -1,0 +1,44 @@
+MDP: 147 estados (estoque 0..20 x 7 dias), ate 21 acoes, 1617 pares (s,a) validos, gamma = 0.95
+Iteracao de valor x iteracao de politica: max |V_vi - V_pi| = 5.30e-11, politicas iguais em 100% dos estados
+Residuo de Bellman de V*: 4.5e-13; P estocastica e R == Monte Carlo (200 mil amostras, 3 pares): OK
+Lucro medio/dia da politica otima: exato (estacionario) = 24.455; simulacao de 700 mil dias = 24.440
+
+Politica otima por dia: pede quando estoque < s_d, ate o nivel S_d (estrutura (s,S) verificada):
+  seg (demanda media 3): s =  3, S = [12]  (acao por estoque 0..: [12, 11, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0]...)
+  ter (demanda media 3): s =  3, S = [12]  (acao por estoque 0..: [12, 11, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0]...)
+  qua (demanda media 4): s =  4, S = [12]  (acao por estoque 0..: [12, 11, 10, 9, 0, 0, 0, 0, 0, 0, 0, 0]...)
+  qui (demanda media 4): s =  4, S = [14]  (acao por estoque 0..: [14, 13, 12, 11, 0, 0, 0, 0, 0, 0, 0, 0]...)
+  sex (demanda media 7): s =  6, S = [20]  (acao por estoque 0..: [20, 19, 18, 17, 16, 15, 0, 0, 0, 0, 0, 0]...)
+  sab (demanda media 10): s = 10, S = [20]  (acao por estoque 0..: [20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 0, 0]...)
+  dom (demanda media 8): s =  9, S = [16]  (acao por estoque 0..: [16, 15, 14, 13, 12, 11, 10, 9, 8, 0, 0, 0]...)
+Estrutura (s,S) por dia (teorema de Scarf): confirmada
+
+Politicas de referencia (avaliacao exata):
+politica                                lucro/dia  perda V* %  acao otima %
+otima (iteracao de politica)               24.455        0.00         100.0
+(s,S) unica s=7, S=20                      23.704        5.91          72.1
+repoe media de amanha + 2                  14.830       32.98          61.2
+aleatoria (fixa)                           15.459       39.25          15.6
+nunca pede                                -11.143      122.39          73.5
+
+Aprendizado sem modelo: 1000000 dias reais por execucao, 10 sementes (mesmas demandas para todos), epsilon 1 -> 0.01 na 1a metade, politica gulosa final:
+metodo                                   lucro/dia        perda V* %      acao otima %
+Q-learning (alfa 0.1)               23.479 +- 0.146     4.635 +- 0.629    62.041 +- 3.391
+Q-learning (alfa 1/n^0.7)           23.989 +- 0.122     1.404 +- 0.354    77.007 +- 1.780
+SARSA (alfa 1/n^0.7)                23.067 +- 0.223     7.581 +- 1.092    60.204 +- 2.819
+Expected SARSA (alfa 1/n^0.7)       23.040 +- 0.228     7.907 +- 1.258    59.932 +- 3.340
+Q-learning eps fixo 0.3             24.145 +- 0.082     0.943 +- 0.184    78.707 +- 1.362
+Pareado: perda(alfa 1/n^0.7) - perda(alfa 0.1) = -3.23 p.p. (10/10 sementes melhores)
+Pareado: perda(SARSA) - perda(Q-learning) = 6.18 p.p. (10/10 com SARSA pior); perda(Expected SARSA) - perda(SARSA) = 0.33 p.p. (4/10)
+
+Com so 20000 dias reais (10 sementes, mesmas demandas): Dyna-Q (modelo amostral) e R-MAX (modelo de contagens + otimismo):
+agente                         lucro/dia        perda V* %      acao otima %
+Q-learning                18.274 +- 0.557    21.506 +- 1.864    40.340 +- 2.506
+Dyna-Q n=5                19.237 +- 0.289    23.228 +- 1.444    30.612 +- 2.740
+Dyna-Q n=20               22.107 +- 0.294    11.068 +- 1.103    51.088 +- 2.711
+Dyna-Q n=50               23.038 +- 0.305     6.038 +- 1.339    61.497 +- 3.982
+R-MAX (modelo, m=5)       23.147 +- 0.175     4.988 +- 0.756    66.122 +- 1.691
+R-MAX (modelo, m=20)      21.743 +- 0.140     9.085 +- 0.563    68.163 +- 1.864
+Pareado: perda(Dyna n=20) - perda(Q-learning) = -10.44 p.p. (Dyna melhor em 10/10); perda(R-MAX) - perda(Q-learning) = -16.52 p.p. (10/10)
+
+Todos os assert passaram. (tempo total ~ 304 s)
